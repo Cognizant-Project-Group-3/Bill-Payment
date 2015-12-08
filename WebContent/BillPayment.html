@@ -2,14 +2,108 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>Insert title here</title>
+<title>Customer Registration</title>
+
+<!-- Logic for validation -->
+
+
+
 </head>
+
+<script>  
+function validateForm(){  
+	var id=document.bill_pay.id.value;  
+	var type= document.bill_pay.type.value;
+	var name=document.bill_pay.name.value;  
+	var pending_amount=document.bill_pay.pending_amount.value;
+	var payment_date=document.bill_pay.payment_date.value;
+	var amount_to_pay=document.bill_pay.amount_to_pay.value;
+	var card_type= document.bill_pay.card_type.value;
+	var card_no= document.bill_pay.card_no.value;
+	var card_no2= document.bill_pay.card_no2.value;
+	var card_validity= document.bill_pay.card_validity.value;
+	var cvv=document.bill_pay.cvv.value;  
+	
+	if (id==null || id==""){  
+		  alert("Id can't be blank");  
+		  return false;  
+		}
+	if(type==null || type==""){  
+		  alert("Vendor type can't be blank");  
+		  return false;
+	}
+	
+	if (name==null || name==""){  
+		  alert("Name can't be blank");  
+		  return false;  
+		}
+	
+	if (pending_amount==null || pending_amount==""){  
+		  alert("Pending Amount can't be blank");  
+		  return false;  
+		}
+	if (payment_date==null || payment_date==""){  
+		  alert("Payment Date can't be blank");  
+		  return false;  
+		}
+	if (amount_to_pay==null || amount_to_pay==""){  
+		  alert("Amount to pay can't be blank");  
+		  return false;  
+		}
+	
+	if(card_type==null || card_type==""){  
+		  alert("Card type can't be blank");  
+		  return false;
+	}
+	 if(card_no==null || card_no==""){  
+		  alert("Card no. can't be blank");  
+		  return false;	  
+
+}
+	 if(card_no2==null || card_no2==""){  
+		  alert("Card no. can't be blank");  
+		  return false;	  
+
+}
+	 if(card_validity==null || card_validity==""){  
+		  alert("Card Validity can't be blank");  
+		  return false;	  
+
+}
+	 if (cvv==null || cvv==""){  
+		  alert("CVV can't be blank");  
+		  return false;  
+		}
+	 
+	 if(!(card_no==card_no2)){
+		 alert("Confirm card number does not match");
+		 return false;
+	 }
+
+	
+}
+
+</script>  
+
 <body>
-		<form action="BillPaymentServlet">
-			Customer Id: <input type="text" name="custid"><br>
-			Vendor Type: <input type="text"><br>
-			Vendor Name: <input type="text"><br>
-			<input type="submit" value="GO">
-		</form>
+<form name="bill_pay"  action="" onsubmit="return validateForm();">
+          CUSTOMER ID:<input type="text" name="id"/><br/>
+          VENDOR TYPE:<input type="text" name="type"/><br/>
+          VENDOR NAME: <input type="text" name="name"/><br/>
+          PENDING AMOUNT:<input type="text" name="pending_amount"/><br/>
+          PAYMENT DATE: <input type="text" name="payment_date"/><br/>
+          AMOUNT TO PAY:<input type="text" name="amount_to_pay"/><br/>
+          CARD TYPE:<input type="text" name="card_type"/><br/>
+          CARD NO:<input type="text" name="card_no"/><br/>
+          CONFIRM CARD NO:<input type="text" name="card_no2"/><br/>
+          CARD VALIDITY:<input type="text" name="card_validity"/><br/>
+          CVV:<input type="text" name="cvv"/><br/>
+          
+         <input type="submit" value="Pay"/>
+         <input type="reset" value="Reset"/>
+          
+          
+          </form>
 </body>
 </html>
+          
