@@ -2,12 +2,99 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>Insert title here</title>
+<title>Customer Registration</title>
+
+<!-- Logic for validation -->
+
+
+
 </head>
+
+<script>  
+function validateForm(){  
+var id=document.vendor_reg.id.value;  	
+var name=document.vendor_reg.name.value;  
+var address= document.vendor_reg.address.value;
+var contact_no= document.vendor_reg.contact_no.value;
+var country= document.vendor_reg.country.value;
+var state= document.vendor_reg.state.value;
+var email= document.vendor_reg.email.value;
+var type= document.vendor_reg.type.value;
+var card_no= document.vendor_reg.card_no.value;
+
+if (id==null || id==""){  
+	  alert("Id can't be blank");  
+	  return false;  
+	}
+
+if (name==null || name==""){  
+  alert("Name can't be blank");  
+  return false;  
+}
+if(address==null || address==""){  
+	  alert("Address can't be blank");  
+	  return false;	  
+
+}
+if(contact_no==null || contact_no==""){  
+	  alert("Contact no. can't be blank");  
+	  return false;	  
+
+}
+if(country==null || country==""){  
+	  alert("Country can't be blank");  
+	  return false;	  
+
+}
+if(state==null || state==""){  
+	  alert("State can't be blank");  
+	  return false;	  
+
+}
+
+if(email==null || email==""){  
+	  alert("Email ID can't be blank");  
+	  return false;	  
+
+}
+
+
+if(type==null || type==""){  
+	  alert("Vendor type can't be blank");  
+	  return false;
+}
+	   if(card_no==null || card_no==""){  
+		  alert("Card no. can't be blank");  
+		  return false;	  
+
+}
+
+	  
+	
+
+
+}
+
+</script>  
+
 <body>
-		<form action="UpdateCustomerServlet">
-			Customer Id:<input type="text" name="custid">
-			<input type="submit" value="GO">
-		</form>
+          <form name="vendor_reg"  action="" onsubmit="return validateForm();">
+          CUSTOMER ID:<input type="text" name="id"/><br/>
+          CUSTOMER NAME: <input type="text" name="name"/><br/>
+          ADDRESS:<input type="text" name="address"/><br/>
+          CONTACT NO:<input type="text" name="contact_no"/><br/>
+          COUNTRY:<input type="text" name="country"/><br/>
+          STATE:<input type="text" name="state"/><br/>
+          EMAIL ID:<input type="text" name="email"/><br/>
+          VENDOR TYPE:<input type="text" name="type"/><br/>
+          CARD NO:<input type="text" name="card_no"/><br/>
+          
+           
+         <input type="submit" value="Save"/>
+         <input type="reset" value="Reset"/>
+          
+          
+          </form>
 </body>
 </html>
+          
