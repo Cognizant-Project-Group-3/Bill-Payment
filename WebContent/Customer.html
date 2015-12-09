@@ -2,12 +2,147 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>Insert title here</title>
+<title>Customer Registration</title>
+
+<!-- Logic for validation -->
+
+
+
 </head>
+
+<script>  
+function validateForm(){  
+var name=document.vendor_reg.name.value;  
+var address= document.vendor_reg.address.value;
+var contact_no= document.vendor_reg.contact_no.value;
+var country= document.vendor_reg.country.value;
+var state= document.vendor_reg.state.value;
+var email= document.vendor_reg.email.value;
+var document_detail_no= document.vendor_reg.document_detail_no.value;
+var reg_date= document.vendor_reg.reg_date.value;
+var type= document.vendor_reg.type.value;
+var card_no= document.vendor_reg.card_no.value;
+
+
+
+if (name==null || name==""){  
+  alert("Name can't be blank");  
+  return false;  
+}
+if(address==null || address==""){  
+	  alert("Address can't be blank");  
+	  return false;	  
+
+}
+if(contact_no==null || contact_no==""){  
+	  alert("Contact no. can't be blank");  
+	  return false;	  
+
+}
+if(country==null || country==""){  
+	  alert("Country can't be blank");  
+	  return false;	  
+
+}
+if(state==null || state==""){  
+	  alert("State can't be blank");  
+	  return false;	  
+
+}
+
+if(email==null || email==""){  
+	  alert("Email ID can't be blank");  
+	  return false;	  
+
+}
+
+if(document_detail_no==null || document_detail_no==""){  
+	  alert("Document detail number can't be blank");  
+	  return false;	  
+
+}
+if(reg_date==null || reg_date==""){  
+	  alert("Registration date can't be blank");  
+	  return false;
+}
+if(type==null || type==""){  
+	  alert("Vendor type can't be blank");  
+	  return false;
+}
+	   if(card_no==null || card_no==""){  
+		  alert("Card no. can't be blank");  
+		  return false;	  
+
+}
+
+	  
+	
+
+
+}
+
+</script>  
+
 <body>
-		New Customer?<a href="RegisterCustomer.html">Register Here</a><br>
-		Existing Customer?<a href="UpdateCustomer.html">Login to Update Details</a><br>
-		View Pending Bills?<a href="PendingBill.html">Click Here</a><br>
-		Pay Bill?<a href="BillPayment.html">Click Here</a>
+          <form name="vendor_reg"  action="" onsubmit="return validateForm();">
+          CUSTOMER NAME: <input type="text" name="name"/><br/>
+          ADDRESS:<input type="text" name="address"/><br/>
+          CONTACT NO:<input type="text" name="contact_no"/><br/>
+          COUNTRY:
+          <select name="country">
+          <option value="India">India</option> </select>
+          <br/>
+          
+          STATE:
+          <select name="state">
+<option value="Andhra Pradesh">Andhra Pradesh</option>
+<option value="Arunachal Pradesh">Arunachal Pradesh</option>
+<option value="Assam">Assam</option>
+<option value="Bihar">Bihar</option>
+<option value="Chhattisgarh">Chhattisgarh</option>
+<option value="Goa">Goa</option>
+<option value="Gujarat">Gujarat</option>
+<option value="Haryana">Haryana</option>
+<option value="Himachal Pradesh">Himachal Pradesh</option>
+<option value="Jammu and Kashmir">Jammu and Kashmir</option>
+<option value="Jharkhand">Jharkhand</option>
+<option value="Karnataka">Karnataka</option>
+<option value="Kerala">Kerala</option>
+<option value="Madhya Pradesh">Madhya Pradesh</option>
+<option value="Maharashtra">Maharashtra</option>
+<option value="Manipur">Manipur</option>
+<option value="Mizoram">Mizoram</option>
+<option value="Nagaland">Nagaland</option>
+<option value="Odisha">Odisha</option>
+<option value="Punjab">Punjab</option>
+<option value="Rajasthan">Rajasthan</option>
+<option value="Sikkim">Sikkim</option>
+<option value="Tamil Nadu">Tamil Nadu</option>
+<option value="Telangana">Telangana</option>
+<option value="Uttarakhand">Uttarakhand</option>
+<option value="Uttar Pradesh">Uttar Pradesh</option>
+<option value="West Bengal">West Bengal</option>
+</select><br/>
+          
+          EMAIL ID:<input type="text" name="email"/><br/>
+          IDENTIFICATION DOC:<input type="text" name="document_detail_no"/><br/>
+          REGISTRATION DATE:<input type="text" name="reg_date"/><br/>
+          VENDOR TYPE:
+          <select name="type">
+  			 <option value="Electricity">Electricity</option>
+ 			 <option value="Telephone">Telephone</option>
+  				<option value="Insurance">Insurance</option>
+ 				 <option value="Tax">Tax</option>
+		</select><br/>
+		
+          CARD NO:<input type="text" name="card_no"/><br/>
+          
+           
+         <input type="submit" value="Register"/>
+         <input type="reset" value="Reset"/>
+          
+          
+          </form>
 </body>
 </html>
+          
