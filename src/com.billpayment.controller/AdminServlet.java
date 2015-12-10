@@ -80,7 +80,6 @@ public class AdminServlet extends HttpServlet {
 		else {
 			RequestDispatcher rd = request.getRequestDispatcher("index.html");
 			rd.forward(request, response);
-			// out.print("No!!");
 		}
 	}
 
