@@ -88,7 +88,14 @@ function validateForm(){
 <body>
 <form name="bill_pay"  action="" onsubmit="return validateForm();">
           CUSTOMER ID:<input type="text" name="id"/><br/>
-          VENDOR TYPE:<input type="text" name="type"/><br/>
+          VENDOR TYPE:
+          <select name="type">
+  			 <option value="Electricity">Electricity</option>
+ 			 <option value="Telephone">Telephone</option>
+  				<option value="Insurance">Insurance</option>
+ 				 <option value="Tax">Tax</option>
+		</select><br/>
+          
           VENDOR NAME: <input type="text" name="name"/><br/>
           PENDING AMOUNT:<input type="text" name="pending_amount"/><br/>
           PAYMENT DATE: <input type="text" name="payment_date"/><br/>
