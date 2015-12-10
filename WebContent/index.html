@@ -3,9 +3,23 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>Bill Payment Homepage</title>
+<script type="text/javascript">
+function validateForm(){  
+	var username=document.index_page.username.value;  	
+	var password=document.index_page.password.value;
+	if (username==null || username==""){  
+		  alert("Id can't be blank");  
+		  return false;  
+		}
+	if (password==null || password==""){  
+	  alert("Password can't be blank");  
+	  return false;  
+	}
+}
+</script>
 </head>
 <body>
-		<form action="AdminServlet" method="post">
+		<form name="index_page" onsubmit="return validateForm()" ="AdminServlet" method="post">
 			User Id : <input type="text" name="username"><br>
 			Password : <input type="password" name="password"><br>
 			<input type="submit" value="Login">
