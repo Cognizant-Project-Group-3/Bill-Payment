@@ -1,0 +1,81 @@
+-----------------------------------------------------
+-- Table COUNTRY
+-- -----------------------------------------------------
+CREATE  TABLE COUNTRY (
+  ID VARCHAR(10) NOT NULL ,
+  COUNTRY VARCHAR(20) NOT NULL ,
+  STATE VARCHAR(20) NOT NULL ,
+  PRIMARY KEY (ID) );
+
+
+-- -----------------------------------------------------
+-- Table CUSTOMER
+-- -----------------------------------------------------
+CREATE  TABLE CUSTOMER (
+  ID INT NOT NULL ,
+  NAME VARCHAR(20) NOT NULL ,
+  CONTACT_NO VARCHAR(10) NOT NULL ,
+  ADDRESS VARCHAR(40) NOT NULL ,
+  REG_DATE DATE NOT NULL ,
+  DOCUMENT_DETAIL_NO VARCHAR(15) NOT NULL ,
+  EMAIL VARCHAR(20) NOT NULL ,
+  COUNTRY_ID VARCHAR(10) NOT NULL ,
+  CARD_NO INT NOT NULL ,
+  PRIMARY KEY (ID) ,
+  
+    FOREIGN KEY (COUNTRY_ID )
+    REFERENCES COUNTRY (ID )
+  
+);
+
+
+
+-- -----------------------------------------------------
+-- Table VENDOR
+-- -----------------------------------------------------
+CREATE  TABLE VENDOR (
+  ID INT NOT NULL ,
+  COUNTRY_ID VARCHAR(10) NOT NULL ,
+  COMPANY_REG_NO VARCHAR(10) NOT NULL ,
+  TYPE VARCHAR(10) NOT NULL ,
+  YOS INT NOT NULL ,
+  CERTIFICATE_ISSUE_DATE DATE NOT NULL ,
+  CERTIFICATE_VALIDITY_DATE DATE NOT NULL ,
+  CONTACT_NO VARCHAR(10) NOT NULL ,
+  WEBSITE VARCHAR(20) NOT NULL ,
+  EMAIL VARCHAR(20) NOT NULL ,
+  AMOUNT FLOAT NOT NULL ,
+  NAME VARCHAR(20) NOT NULL ,
+  ADDRESS VARCHAR(40) NOT NULL ,
+  EMPLOYEE_COUNT INT NOT NULL ,
+  PRIMARY KEY (ID) ,
+    FOREIGN KEY (COUNTRY_ID )
+    REFERENCES COUNTRY (ID )
+);
+
+
+-- -----------------------------------------------------
+-- Table CV_MASTER
+-- -----------------------------------------------------
+CREATE  TABLE CV_MASTER (
+  CUSTOMER_ID INT NOT NULL ,
+  VENDOR_ID INT NOT NULL ,
+  PENDING_AMOUNT FLOAT NOT NULL ,
+
+ FOREIGN KEY (VENDOR_ID )
+    REFERENCES VENDOR (ID),  
+
+    FOREIGN KEY (CUSTOMER_ID )
+    REFERENCES CUSTOMER (ID )
+);
+
+-- -----------------------------------------------------
+-- Table ADMIN
+-- -----------------------------------------------------
+CREATE  TABLE ADMIN (
+  USERNAME VARCHAR(20) NOT NULL ,
+  PASSWORD VARCHAR(20) NOT NULL );
+
+
+
+
