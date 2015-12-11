@@ -1,1 +1,52 @@
+package com.billpayment.test;
 
+import java.sql.SQLException;
+
+import junit.framework.Assert;
+
+import org.junit.Test;
+
+import com.billpayment.helper.DBUtil;
+
+public class DBUtilTest {
+	@Test
+	public void testCreateConnectionPositive() {
+		try{
+		DBUtil.createConnection();
+		}
+		catch(ClassNotFoundException cnfe){
+			cnfe.printStackTrace();
+			
+		}catch(SQLException se){
+			Assert.assertEquals(1, 2);
+			se.printStackTrace();
+		}
+	}
+	
+	@Test(expected=SQLException.class)
+	public void testCreateConnectionNegative() throws SQLException{
+		try{
+			DBUtil.createConnection();
+		}catch(ClassNotFoundException cnfe){
+			//Assert.assertEquals(1, 2);
+			cnfe.printStackTrace();
+		}
+	}
+
+	@Test
+	public void testCloseConnectionPositive() {
+	
+		try{
+			DBUtil.closeConnection();
+			}
+			catch(SQLException se){
+				
+				se.printStackTrace();
+			}
+	}
+			@Test(expected=SQLException.class)
+			public void testCloseConnectionNegative() throws ClassNotFoundException, SQLException {
+					DBUtil.createConnection();
+					DBUtil.closeConnection();
+		}
+}
