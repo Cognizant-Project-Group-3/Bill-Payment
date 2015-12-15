@@ -1,6 +1,131 @@
 package com.billpayment.dao;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import com.billpayment.helper.DBUtil;
+
 public class BillDAO {
 
-	
-}
+	@SuppressWarnings("finally")
+	public int getVendorId(String v_name, String v_type)
+			throws ClassNotFoundException, SQLException {
+
+		// TODO Auto-generated method stub
+		Connection con = null;
+		boolean status = false;
+		int vendor_id = 0;
+
+		try {
+			con = DBUtil.createConnection();
+			final PreparedStatement stmt = con
+					.prepareStatement("SELECT ID FROM VENDOR WHERE TYPE=? AND NAME=?");
+			stmt.setString(1, v_type);
+			stmt.setString(2, v_name);
+			final ResultSet rsVendor = stmt.executeQuery();
+
+			while (rsVendor.next()) {
+				vendor_id = rsVendor.getInt(1);
+			}// end while
+			rsVendor.close();
+		} finally {
+			DBUtil.closeConnection();
+			if (con != null) {
+				con.close();
+			}
+		}// end finally
+		return vendor_id;
+	}// end get()
+
+	public int getCustomerId(int c_id) throws ClassNotFoundException,
+			SQLException {
+		// TODO Auto-generated method stub
+		Connection con = null;
+		boolean status = false;
+		int customer_id = 0;
+
+		try {
+			con = DBUtil.createConnection();
+			final PreparedStatement stmt = con
+					.prepareStatement("SELECT ID FROM CUSTOMER WHERE ID=?");
+			stmt.setInt(1, c_id);
+
+			final ResultSet rsVendor = stmt.executeQuery();
+
+			while (rsVendor.next()) {
+				customer_id = rsVendor.getInt(1);
+			}
+			rsVendor.close();
+		} finally {
+			DBUtil.closeConnection();
+			if (con != null) {
+				con.close();
+
+			}// end finally
+
+		}
+		return customer_id;
+	}// end function()
+
+	public float pendingAmount(int c_id, int vendor_id)
+			throws ClassNotFoundException, SQLException {
+		// TODO Auto-generated method stub
+		Connection con = null;
+		boolean status = false;
+		int customer_id = 0;
+		float pendingAmount = 0.0f;
+		try {
+			con = DBUtil.createConnection();
+			final PreparedStatement stmt = con
+					.prepareStatement("SELECT PENDING_AMOUNT FROM CV_MASTER WHERE CUSTOMER_ID=? AND VENDOR_ID=?");
+			stmt.setInt(1, c_id);
+			stmt.setInt(2, vendor_id);
+
+			final ResultSet rsVendor = stmt.executeQuery();
+
+			while (rsVendor.next()) {
+				pendingAmount = rsVendor.getFloat(1);
+			}
+			rsVendor.close();
+		} finally {
+			DBUtil.closeConnection();
+			if (con != null) {
+				con.close();
+
+			}// end finally
+
+		}
+
+		return pendingAmount;
+	}
+
+	public int updatePendingAmountDao(int customerId, int vendor_id,
+			float newAmount) throws SQLException, ClassNotFoundException {
+		// TODO Auto-generated method stub
+
+		Connection con = null;
+		int status = 0;
+		float pendingAmount = 0.0f;
+		try {
+			System.out.println(customerId + " " + vendor_id + " " + newAmount);
+			con = DBUtil.createConnection();
+			final PreparedStatement stmt = con
+					.prepareStatement("UPDATE CV_MASTER SET PENDING_AMOUNT = ? WHERE CUSTOMER_ID = ? AND VENDOR_ID = ?");
+			stmt.setFloat(1, newAmount);
+			stmt.setInt(2, customerId);
+			stmt.setInt(3, vendor_id);
+			status = stmt.executeUpdate();
+		} finally {
+			DBUtil.closeConnection();
+			if (con != null) {
+				con.close();
+
+			}// end finally
+
+		}
+		return status;
+	}
+
+}// end class
