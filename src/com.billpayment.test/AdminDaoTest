@@ -1,0 +1,49 @@
+package com.billpayment.test;
+
+import java.sql.SQLException;
+
+import junit.framework.Assert;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import com.billpayment.dao.AdminDAO;
+
+public class AdminDaoTest {
+	AdminDAO adminDao;
+
+	@Before
+	public void setUp() throws Exception {
+		adminDao=new AdminDAO();
+	}
+
+	@After
+	public void tearDown() throws Exception {
+		adminDao=null;
+	}
+
+	@Test
+	public void testVerifyPositive() {
+		boolean status = false;
+		
+		try{
+		status=adminDao.verify("admin", "password");
+		Assert.assertEquals(true, status);
+		
+		}catch(ClassNotFoundException cnfe){
+			cnfe.printStackTrace();
+			
+		}catch(SQLException se){
+			se.printStackTrace();
+		}
+	}
+	
+	@Test
+	public void testVerifyNegative() throws SQLException, ClassNotFoundException{
+		boolean status = false;
+		status=adminDao.verify("admn", "pssword");
+		Assert.assertEquals(false, status);
+	}
+
+}
