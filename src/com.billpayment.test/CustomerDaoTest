@@ -10,22 +10,22 @@ import org.junit.Test;
 
 import com.billpayment.dao.CustomerDAO;
 import com.billpayment.entity.Customer;
+import com.billpayment.exception.DatabaseException;
 
 public class CustomerDaoTest {
+
 	CustomerDAO customerDao;
 	Customer customer;
-
+	
 	@Before
 	public void setUp() throws Exception {
 		customerDao=new CustomerDAO();
-		System.out.println("before");
+		
 	}
 
 	@After
 	public void tearDown() throws Exception {
 		customerDao=null;
-		System.out.println("after");
-		
 	}
 
 	@Test
@@ -33,7 +33,7 @@ public class CustomerDaoTest {
 		customer=new Customer();
 		int status1=0;
 		int status2=0;
-		System.out.println("insert+");
+	
 		
 		customer.setAddress("cdc");
 		customer.setCardNo(123);
@@ -53,16 +53,20 @@ public class CustomerDaoTest {
 		try{
 			
 			status1=customerDao.insertCustRecord(customer);
-			System.out.println("status1 = " + status1);
+			
 			
 			status2=customerDao.insertCVMaster(customer);
-			System.out.println("status2 = " + status2);
+		
 			
 			
 		}catch(ClassNotFoundException cnfe){
-			System.out.println(cnfe.getMessage());
+			cnfe.printStackTrace();
 		}catch (SQLException se) {
-			System.out.println(se.getMessage());
+			se.printStackTrace();
+		}
+		if(status1*status2!=0){
+			status1=1;
+			status2=1;
 		}
 		Assert.assertEquals(1, (status1*status2));
 	}
@@ -71,7 +75,7 @@ public class CustomerDaoTest {
 	@Test(expected=SQLException.class)
 	public void testInsertRecordNegative() throws ClassNotFoundException, SQLException {
 		customer=new Customer();
-		System.out.println("insert -");
+	
 		
 		customer.setAddress("cdc");
 		customer.setCardNo(123);
@@ -93,7 +97,7 @@ public class CustomerDaoTest {
 	
 	@Test
 	public void testFetchCustomerDetails() {
-         System.out.println("Fetch test +");
+         
 		
          customer=new Customer();
 		
@@ -101,20 +105,43 @@ public class CustomerDaoTest {
 			customer=customerDao.fetchCustomerDetails(105);
 			Assert.assertEquals("Anisha", customer.getName());
 			Assert.assertEquals("955254007", customer.getContactNo());
-			Assert.assertEquals("S B ROAD", customer.getAddress());
+			Assert.assertEquals("S ROAD", customer.getAddress());
 			Assert.assertEquals("anigaikwad@gmail.com", customer.getEmail());
 			Assert.assertEquals(98765, customer.getCardNo());
 			
 	
 		}catch(ClassNotFoundException cnfe){
 			
-			System.out.println(cnfe.getMessage());
+			cnfe.printStackTrace();
 		
 		}catch(SQLException se){
 		
-			System.out.println(se.getMessage());
+			se.printStackTrace();
 		}
+	}
 	
+	@Test
+	public void testUpdateRecordPositive() throws ClassNotFoundException, SQLException, DatabaseException  {
+		customer=new Customer("Anisha","955254007","S ROAD","PASS1234567","anigaikwad@gmail.com",98765,"Telephone","aircel","Passport","India","Maharashtra");
+		customer.setCustid(105);
+		int status=0;
+		
+		try{
+			status=customerDao.updateRecord(customer);
+			Assert.assertEquals(1, status);
+		}catch(ClassNotFoundException cnfe){
+			cnfe.printStackTrace();
+			
+		}catch(DatabaseException dbe){
+			dbe.printStackTrace();
+			
+		}catch(SQLException se){
+			se.printStackTrace();
+		}
+		
+		
+		
+		
 		
 	}
 
