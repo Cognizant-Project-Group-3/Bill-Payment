@@ -1,0 +1,79 @@
+package com.billpayment.test;
+
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Set;
+
+import junit.framework.Assert;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import com.billpayment.dao.PendingBillDAO;
+
+public class PendingBillDaoTest {
+
+	PendingBillDAO pendingBillDao;
+	
+	
+	@Before
+	public void setUp() throws Exception {
+		pendingBillDao=new PendingBillDAO();
+	}
+
+	@After
+	public void tearDown() throws Exception {
+		pendingBillDao=null;
+	}
+
+	@Test
+	public void testFetchVendorMap(){
+		HashMap<Integer, Float> actual = new HashMap<Integer, Float>();
+		HashMap<Integer, Float> expected = new HashMap<Integer, Float>();
+		try{
+		actual = pendingBillDao.fetchVendorMap(102);
+		expected.put(10000,2000f);
+		Assert.assertEquals(expected, actual);
+		}catch(SQLException se){
+			se.printStackTrace();
+		}catch(ClassNotFoundException cnfe){
+			cnfe.printStackTrace();
+		}
+
+	}
+	
+	
+	@Test
+	public void testFetchVendorNameMap() {
+		HashMap<Integer, String> actual = new HashMap<Integer, String>();
+		HashMap<Integer, String> expected = new HashMap<Integer, String>();
+		try{
+		expected.put(10000,"Airtel");
+		Set<Integer> set=expected.keySet();
+		actual = pendingBillDao.fetchVendorNameMap(set);
+		Assert.assertEquals(expected, actual);
+		}catch(SQLException se){
+			se.printStackTrace();
+		}catch(ClassNotFoundException cnfe){
+			cnfe.printStackTrace();
+		}
+	}
+
+	@Test
+	public void testFetchVendorTypeMap() {
+		HashMap<Integer, String> actual = new HashMap<Integer, String>();
+		HashMap<Integer, String> expected = new HashMap<Integer, String>();
+		try{
+		expected.put(10000,"Telephone");
+		Set<Integer> set=expected.keySet();
+		actual = pendingBillDao.fetchVendorTypeMap(set);
+		Assert.assertEquals(expected, actual);
+		}catch(SQLException se){
+			se.printStackTrace();
+		}catch(ClassNotFoundException cnfe){
+			cnfe.printStackTrace();
+		}
+	}
+
+}
