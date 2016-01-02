@@ -1,0 +1,62 @@
+package com.billpayment.BO;
+
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import org.apache.log4j.Logger;
+
+import com.billpayment.dao.PendingBillDAO;
+import com.billpayment.entity.PendingBillDetails;
+import com.billpayment.exception.DatabaseException;
+
+public class PendingBillsBO {
+	private static final Logger LOGGER = Logger
+			.getLogger(com.billpayment.BO.AdminBO.class);
+	PendingBillDAO pendingBillDAO = new PendingBillDAO();
+
+	//to fetch all pending bills corresponding to a customer
+	public List<PendingBillDetails> fetchList(int customerId)
+			throws DatabaseException {
+		// TODO Auto-generated method stub
+
+		HashMap<Integer, String> vendorTypeMap = new HashMap<Integer, String>();
+		HashMap<Integer, String> vendorNameMap = new HashMap<Integer, String>();
+		HashMap<Integer, Float> vendorMap = new HashMap<Integer, Float>();
+
+		List<PendingBillDetails> list = new ArrayList<PendingBillDetails>();
+
+		try {
+
+			vendorMap = pendingBillDAO.fetchVendorMap(customerId);
+			vendorTypeMap = pendingBillDAO.fetchVendorTypeMap(vendorMap
+					.keySet());
+			vendorNameMap = pendingBillDAO.fetchVendorNameMap(vendorMap
+					.keySet());
+
+			for (Integer key : vendorMap.keySet()) {
+
+				PendingBillDetails pbd = new PendingBillDetails();
+				pbd.setVendorid(key);
+				pbd.setName(vendorNameMap.get(key));
+				pbd.setType(vendorTypeMap.get(key));
+				pbd.setPendingAmount(vendorMap.get(key));
+
+				list.add(pbd);
+
+			}
+
+		} catch (ClassNotFoundException e) {
+			// TODO: handle exception
+			LOGGER.error("Jar for Oracle 10g not found.");
+			throw new DatabaseException(e);
+		} catch (SQLException e) {
+			// TODO: handle exception
+			LOGGER.error("Exception related to database");
+			throw new DatabaseException(e);
+		}
+
+		return list;
+	}
+}
