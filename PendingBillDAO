@@ -1,0 +1,137 @@
+package com.billpayment.dao;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Set;
+
+import com.billpayment.helper.DBUtil;
+
+public class PendingBillDAO {
+	
+	//fetching pending amount
+
+	public HashMap<Integer, Float> fetchVendorMap(int customerId)
+			throws SQLException, ClassNotFoundException {
+		// TODO Auto-generated method stub
+		PreparedStatement psfetch = null;
+		ResultSet rsvendor = null;
+		Connection con = null;
+		HashMap<Integer, Float> vendorAmountMap = new HashMap<Integer, Float>();
+
+		try {
+			// System.out.println("Inside DAO");
+			con = DBUtil.createConnection();
+			String sql = "SELECT VENDOR_ID, PENDING_AMOUNT FROM CV_MASTER WHERE CUSTOMER_ID=?";
+
+			psfetch = con.prepareStatement(sql);
+			psfetch.setInt(1, customerId);
+			rsvendor = psfetch.executeQuery();
+			while (rsvendor.next()) {
+
+				final int vendor_id = rsvendor.getInt("VENDOR_ID");
+				final float pending_amount = rsvendor
+						.getFloat("PENDING_AMOUNT");
+
+				vendorAmountMap.put(vendor_id, pending_amount);
+
+			}
+
+		} finally {
+
+			DBUtil.closeConnection();
+			if (con != null) {
+				con.close();
+
+			}
+
+		}
+
+		return vendorAmountMap;
+	}
+
+	//fetching vendor names
+	
+	public HashMap<Integer, String> fetchVendorNameMap(Set<Integer> keySet)
+			throws SQLException, ClassNotFoundException {
+		// TODO Auto-generated method stub
+		PreparedStatement psfetch = null;
+		ResultSet rsvendor = null;
+		Connection con = null;
+		HashMap<Integer, String> vendorNameMap = new HashMap<Integer, String>();
+
+		try {
+			// System.out.println("Inside DAO");
+			con = DBUtil.createConnection();
+			String sql = "SELECT ID, NAME FROM VENDOR WHERE ID=?";
+
+			for (Integer integer : keySet) {
+				psfetch = con.prepareStatement(sql);
+				psfetch.setInt(1, integer);
+				rsvendor = psfetch.executeQuery();
+				while (rsvendor.next()) {
+
+					final int vendorId = rsvendor.getInt("ID");
+					final String vendorName = rsvendor.getString("NAME");
+					vendorNameMap.put(vendorId, vendorName);
+				}
+
+			}
+			// System.out.println(vendorAmountMap);
+
+		} finally {
+
+			DBUtil.closeConnection();
+			if (con != null) {
+				con.close();
+
+			}
+
+		}
+
+		return vendorNameMap;
+	}
+
+	//fetching vendor type
+	public HashMap<Integer, String> fetchVendorTypeMap(Set<Integer> keySet)
+			throws SQLException, ClassNotFoundException {
+		// TODO Auto-generated method stub
+		PreparedStatement psfetch = null;
+		ResultSet rsvendor = null;
+		Connection con = null;
+		HashMap<Integer, String> vendorTypeMap = new HashMap<Integer, String>();
+
+		try {
+
+			con = DBUtil.createConnection();
+			String sql = "SELECT ID, TYPE FROM VENDOR WHERE ID=?";
+
+			for (Integer integer : keySet) {
+				psfetch = con.prepareStatement(sql);
+				psfetch.setInt(1, integer);
+				rsvendor = psfetch.executeQuery();
+				while (rsvendor.next()) {
+
+					final int vendorId = rsvendor.getInt("ID");
+					final String vendorName = rsvendor.getString("TYPE");
+					vendorTypeMap.put(vendorId, vendorName);
+				}
+
+			}
+
+		} finally {
+
+			DBUtil.closeConnection();
+			if (con != null) {
+				con.close();
+
+			}
+
+		}
+
+		return vendorTypeMap;
+	}
+
+}
