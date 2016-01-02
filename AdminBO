@@ -1,0 +1,35 @@
+package com.billpayment.BO;
+
+import java.sql.SQLException;
+
+import org.apache.log4j.Logger;
+
+import com.billpayment.dao.AdminDAO;
+import com.billpayment.exception.DatabaseException;
+
+public class AdminBO {
+
+	private static final Logger LOGGER = Logger
+			.getLogger(com.billpayment.BO.AdminBO.class);
+
+	//module to verify admin username and password
+	public boolean verify(final String username, final String password)
+			throws DatabaseException {
+		final AdminDAO isadmin = new AdminDAO();
+		boolean status;
+
+		try {
+			status = isadmin.verify(username, password);
+			LOGGER.info("Admin Logged In");
+		} catch (ClassNotFoundException e) {
+			// TODO: handle exception
+			LOGGER.error("Jar for Oracle 10g not found.", e);
+			throw new DatabaseException(e);
+		} catch (SQLException e) {
+			// TODO: handle exception
+			LOGGER.error("Exception related to database", e);
+			throw new DatabaseException(e);
+		}
+		return status;
+	}
+}
