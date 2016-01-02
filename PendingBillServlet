@@ -1,0 +1,101 @@
+package com.billpayment.controller;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.billpayment.BO.BillPaymentBO;
+import com.billpayment.BO.CustomerBO;
+import com.billpayment.BO.PendingBillsBO;
+import com.billpayment.entity.Customer;
+import com.billpayment.entity.PendingBillDetails;
+import com.billpayment.exception.DatabaseException;
+
+/**
+ * Servlet implementation class PendingBillServlet
+ */
+public class PendingBillServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+
+	/**
+	 * @see HttpServlet#HttpServlet()
+	 */
+	public PendingBillServlet() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	/**
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
+	 *      response)
+	 */
+	protected void doGet(HttpServletRequest request,
+			HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		doPost(request, response);
+	}
+
+	/**
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
+	 *      response)
+	 */
+	protected void doPost(HttpServletRequest request,
+			HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		BillPaymentBO billPaymentBO = new BillPaymentBO();
+		PendingBillsBO pendingBillsBO = new PendingBillsBO();
+		response.setContentType("text/html");
+		PrintWriter out = response.getWriter();
+		int customerId = Integer.parseInt(request.getParameter("custid"));
+		CustomerBO customerBO = new CustomerBO();
+		
+
+		try {
+			boolean isCustomerValid = billPaymentBO
+					.validateCustomer(customerId);
+			if (isCustomerValid == false) {
+				RequestDispatcher reqDispatchError = request
+				.getRequestDispatcher("/error.jsp");
+				request.setAttribute("message", "Invalid CustomerID");
+				reqDispatchError.forward(request, response);
+				return;
+			} else {
+
+				List<PendingBillDetails> list = new ArrayList<PendingBillDetails>();
+				list = pendingBillsBO.fetchList(customerId);
+				Customer customerobj = customerBO.fetchCustomerDetails(customerId);
+				request.setAttribute("customerName", customerobj.getName());
+				request.setAttribute("list", list);
+				request.setAttribute("customer_id", customerId);
+
+				RequestDispatcher dispatcher = request
+						.getRequestDispatcher("/PendingBillDisplay_pro.jsp");
+				dispatcher.forward(request, response);
+
+			}
+
+		} catch (DatabaseException e) {
+			// TODO: handle exception
+			Throwable throwable = e.getThrowable();
+			RequestDispatcher reqDispatchError = request
+					.getRequestDispatcher("/error.jsp");
+			if (throwable instanceof ClassNotFoundException) {
+				request.setAttribute("message", "Jar file for Oracle is absent");
+			} else if (throwable instanceof SQLException) {
+				request.setAttribute("message", "Enter Valid Customer ID!");
+			}
+			reqDispatchError.forward(request, response);
+			return;
+		}
+
+	}
+
+}
