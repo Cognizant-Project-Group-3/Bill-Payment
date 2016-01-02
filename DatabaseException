@@ -1,0 +1,19 @@
+package com.billpayment.exception;
+
+public class DatabaseException extends Exception {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4333323456075293172L;
+	private Throwable throwable;
+
+	public DatabaseException(Throwable throwable) {
+		super(throwable.getMessage());
+		this.throwable = throwable;
+	}
+
+	public Throwable getThrowable() {
+		return throwable;
+	}
+}
