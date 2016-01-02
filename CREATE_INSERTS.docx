@@ -1,0 +1,123 @@
+-----------------------------------------------------
+-- Table COUNTRY
+-- -----------------------------------------------------
+CREATE  TABLE COUNTRY (
+  ID VARCHAR(20) NOT NULL ,
+  COUNTRY VARCHAR(30) NOT NULL ,
+  STATE VARCHAR(30) NOT NULL ,
+  PRIMARY KEY (ID) );
+
+
+-- -----------------------------------------------------
+-- Table CUSTOMER
+-- -----------------------------------------------------
+CREATE  TABLE CUSTOMER (
+  ID INT NOT NULL ,
+  NAME VARCHAR(30) NOT NULL ,
+  CONTACT_NO VARCHAR(10) NOT NULL ,
+  ADDRESS VARCHAR(100) NOT NULL ,
+  REG_DATE DATE NOT NULL ,
+  DOCUMENT_DETAIL_NO VARCHAR(30) NOT NULL ,
+  EMAIL VARCHAR(50) NOT NULL ,
+  COUNTRY_ID VARCHAR(10) NOT NULL ,
+  CARD_NO VARCHAR(30) NOT NULL ,
+  PRIMARY KEY (ID) ,
+  
+    FOREIGN KEY (COUNTRY_ID )
+    REFERENCES COUNTRY (ID )
+  
+);
+
+
+
+-- -----------------------------------------------------
+-- Table VENDOR
+-- -----------------------------------------------------
+CREATE  TABLE VENDOR (
+  ID INT NOT NULL ,
+  COUNTRY_ID VARCHAR(10) NOT NULL ,
+  COMPANY_REG_NO VARCHAR(10) NOT NULL ,
+  TYPE VARCHAR(30) NOT NULL ,
+  YOS INT NOT NULL ,
+  CERTIFICATE_ISSUE_DATE DATE NOT NULL ,
+  CERTIFICATE_VALIDITY_DATE DATE NOT NULL ,
+  CONTACT_NO VARCHAR(10) NOT NULL ,
+  WEBSITE VARCHAR(50) NOT NULL ,
+  EMAIL VARCHAR(50) NOT NULL ,
+  AMOUNT FLOAT NOT NULL ,
+  NAME VARCHAR(50) NOT NULL ,
+  ADDRESS VARCHAR(100) NOT NULL ,
+  EMPLOYEE_COUNT INT NOT NULL ,
+  PRIMARY KEY (ID) ,
+    FOREIGN KEY (COUNTRY_ID )
+    REFERENCES COUNTRY (ID )
+);
+
+
+-- -----------------------------------------------------
+-- Table CV_MASTER
+-- -----------------------------------------------------
+CREATE  TABLE CV_MASTER (
+  CUSTOMER_ID INT NOT NULL ,
+  VENDOR_ID INT NOT NULL ,
+  PENDING_AMOUNT FLOAT NOT NULL ,
+
+ FOREIGN KEY (VENDOR_ID )
+    REFERENCES VENDOR (ID),  
+
+    FOREIGN KEY (CUSTOMER_ID )
+    REFERENCES CUSTOMER (ID )
+);
+
+-- -----------------------------------------------------
+-- Table ADMIN
+-- -----------------------------------------------------
+CREATE  TABLE ADMIN (
+  USERNAME VARCHAR(30) NOT NULL ,
+  PASSWORD VARCHAR(30) NOT NULL );
+
+
+
+
+
+
+
+
+
+
+INSERT INTO ADMIN VALUES(‘admin’,’password’); 
+INSERT INTO VENDOR VALUES(10000,’I15’,’aircel1234’,’Te;ephone’,0,16-DEC-15,16-DEC-30,’9552540007’,’aircel.com’,’aircel@gmail.com’,2000,’Aircel’,’S ROAD’,900);
+INSERT INTO CUSTOMER VALUES(102,’Mayuresh’,’9876543210’,’Pimpri’,16-DEC-15,’PASS1234’,’may@gmail.com’,’I15’,’1234567890123456’);
+INSERT ALL
+  INTO COUNTRY VALUES( 'I01','India','Andhra Pradesh' )
+  INTO COUNTRY VALUES( 'I02','India','Arunachal Pradesh')
+  INTO COUNTRY VALUES( 'I03','India','Assam')
+  INTO COUNTRY VALUES( 'I04','India','Bihar')
+  INTO COUNTRY VALUES( 'I05','India','Chhattisgarh')
+  INTO COUNTRY VALUES( 'I06','India','Goa')
+  INTO COUNTRY VALUES( 'I07','India','Gujarat')
+  INTO COUNTRY VALUES( 'I08','India','Haryana')
+  INTO COUNTRY VALUES( 'I09','India','Himachal Pradesh')
+  INTO COUNTRY VALUES( 'I10','India','Jammu and Kashmir')
+  INTO COUNTRY VALUES( 'I11','India','Jharkhand')
+  INTO COUNTRY VALUES( 'I12','India','Karnataka')
+  INTO COUNTRY VALUES( 'I13','India','Kerala')
+  INTO COUNTRY VALUES( 'I14','India','Madhya Pradesh')
+  INTO COUNTRY VALUES( 'I15','India','Maharashtra')
+  INTO COUNTRY VALUES( 'I16','India','Manipur')
+  INTO COUNTRY VALUES( 'I18','India','Mizoram')
+  INTO COUNTRY VALUES( 'I19','India','Nagaland')
+  INTO COUNTRY VALUES( 'I20','India','Odisha')
+  INTO COUNTRY VALUES( 'I21','India','Punjab')
+  INTO COUNTRY VALUES( 'I22','India','Rajasthan')
+  INTO COUNTRY VALUES( 'I23','India','Sikkim')
+INTO COUNTRY VALUES( 'I24','India','Tamil Nadu')
+INTO COUNTRY VALUES( 'I25','India','Telangana')
+INTO COUNTRY VALUES( 'I26','India','Uttar Pradesh')
+INTO COUNTRY VALUES( 'I27','India','Uttarakhand')
+INTO COUNTRY VALUES( 'I28','India','West Bengal')
+
+SELECT * FROM dual;
+
+
+
