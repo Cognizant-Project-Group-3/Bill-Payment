@@ -1,0 +1,33 @@
+package com.billpayment.helper;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.util.ResourceBundle;
+
+public abstract class DBUtil {
+	private static Connection connStudent = null;
+
+	//to create connection with database
+	public static Connection createConnection() throws ClassNotFoundException,
+			SQLException {
+		final ResourceBundle rsOracle = ResourceBundle.getBundle("oracle");
+		final String driver = rsOracle.getString("driver");
+		final String url = rsOracle.getString("url");// "jdbc:oracle:thin:@localhost:1521:XE";//port:databasename
+		final String user = rsOracle.getString("username");
+		final String password = rsOracle.getString("password");
+
+		Class.forName(driver);
+		connStudent = DriverManager.getConnection(url, user, password);
+		return connStudent;
+
+	}
+
+	//to close connection with database
+	public static void closeConnection() throws SQLException {
+		if (connStudent != null) {
+			connStudent.close();
+		}
+	}
+
+}
