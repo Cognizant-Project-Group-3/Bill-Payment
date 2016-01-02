@@ -1,0 +1,143 @@
+package com.billpayment.controller;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.sql.SQLException;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import com.billpayment.BO.VendorBO;
+import com.billpayment.entity.Vendor;
+import com.billpayment.exception.DatabaseException;
+
+/**
+ * Servlet implementation class UpdateVendorServlet
+ */
+public class UpdateVendorServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+
+	/**
+	 * @see HttpServlet#HttpServlet()
+	 */
+	public UpdateVendorServlet() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	/**
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
+	 *      response)
+	 */
+	protected void doGet(HttpServletRequest request,
+			HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		doPost(request, response);
+	}
+
+	/**
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
+	 *      response)
+	 */
+	protected void doPost(HttpServletRequest request,
+			HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		HttpSession session = request.getSession();
+
+		if (session.getAttribute("username") == null) {
+			response.sendRedirect("index_pro.html");
+
+		}
+
+		response.setContentType("text/html");
+		final PrintWriter out = response.getWriter();
+
+		final int userid = Integer.parseInt(request.getParameter("id"));
+		final String name = request.getParameter("name");
+		final String type = request.getParameter("type");
+		final String company_reg_no = request.getParameter("company_reg_no");
+		final String address = request.getParameter("address");
+		final String country = request.getParameter("country");
+		final String state = request.getParameter("state");
+		final String emailid = request.getParameter("email");
+		final String contact_no = request.getParameter("contact_no");
+		final String website = request.getParameter("website");
+		final int yoe = Integer.parseInt(request.getParameter("yoe"));
+		final int employee_count = Integer.parseInt(request
+				.getParameter("employee_count"));
+
+		final Vendor vendor = new Vendor();
+
+		vendor.setVendorId(userid);
+		vendor.setName(name);
+		vendor.setType(type);
+		vendor.setCompanyRegNo(company_reg_no);
+		vendor.setAddress(address);
+		vendor.setCountry(country);
+		vendor.setState(state);
+		vendor.setEmailid(emailid);
+		vendor.setContactNo(contact_no);
+		vendor.setWebsite(website);
+		vendor.setYoe(yoe);
+		vendor.setEmployeeCount(employee_count);
+
+		int status = 0;
+
+		final VendorBO vendorBO = new VendorBO();
+		vendorBO.calculateAmount(vendor);
+		vendorBO.calculateYOS(vendor);
+		try {
+			status = vendorBO.update(vendor);
+			if (status == 1) {
+				out.print("<a href='homepage.html'>Home</a><br><br>");
+				out.print("Vendor Record was updated successfully<br>");
+				out.print("Your Details are:<br>");
+				VendorBO vendBO = new VendorBO();
+				Vendor vend = new Vendor();
+				vend = vendBO.fetchVendorDetails(userid);
+
+				request.setAttribute("id", status);
+				request.setAttribute("name", vend.getName());
+				request.setAttribute("regno", vend.getCompanyRegNo());
+				request.setAttribute("type", vend.getType());
+				request.setAttribute("add", vend.getAddress());
+				request.setAttribute("country", vend.getCountry());
+				request.setAttribute("state", vend.getState());
+				request.setAttribute("phone", vend.getContactNo());
+				request.setAttribute("site", vend.getWebsite());
+				request.setAttribute("empcount", vend.getEmployeeCount());
+				request.setAttribute("yoe", vend.getYoe());
+
+				if (!response.isCommitted()) {
+				RequestDispatcher requestDispatcher = request
+						.getRequestDispatcher("/VendorDetailsDisplay_pro.jsp");
+				requestDispatcher.forward(request, response);
+				}
+
+			} else {
+				out.print("Vendor Record was not updated successfully");
+				out.print("<a href='UpdateVendor_pro.html'>Try Again</a>");
+			}
+
+		} catch (DatabaseException e) {
+			// TODO: handle exception
+			Throwable throwable = e.getThrowable();
+			RequestDispatcher reqDispatchError = request
+					.getRequestDispatcher("/error.jsp");
+			if (throwable instanceof ClassNotFoundException) {
+				request.setAttribute("message", "Jar file for Oracle is absent");
+			} else if (throwable instanceof SQLException) {
+				request.setAttribute("message", "Exception related to database");
+			}
+			if (!response.isCommitted()) {
+				reqDispatchError.forward(request, response);
+				return;
+			}
+		}
+
+	}
+}
