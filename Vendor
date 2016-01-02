@@ -1,0 +1,184 @@
+package com.billpayment.entity;
+
+import java.io.Serializable;
+
+public class Vendor implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7974113716969536376L;
+
+	private int vendorid;
+	private String name;
+	private String type;
+	private String companyregno;
+	private String address;
+	private String country;
+	private String state;
+	private String emailid;
+	private String contactno;
+	private String website;
+	private String certificateissuedate;
+	private String certificatevaliditydate;
+	private int employeecount;
+	private int yoe;
+	private int yos;
+	private int countryid;
+	private float amount;
+
+	public Vendor() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	public Vendor(String name, String type, String company_reg_no,
+			String address, String country, String state, String emailid,
+			String contact_no, String website, int employee_count, int yoe) {
+		super();
+		this.name = name;
+		this.type = type;
+		this.companyregno = company_reg_no;
+		this.address = address;
+		this.country = country;
+		this.state = state;
+		this.emailid = emailid;
+		this.contactno = contact_no;
+		this.website = website;
+		this.employeecount = employee_count;
+		this.yoe = yoe;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public String getCompanyRegNo() {
+		return companyregno;
+	}
+
+	public void setCompanyRegNo(String company_reg_no) {
+		this.companyregno = company_reg_no;
+	}
+
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
+	public String getCountry() {
+		return country;
+	}
+
+	public void setCountry(String country) {
+		this.country = country;
+	}
+
+	public String getState() {
+		return state;
+	}
+
+	public void setState(String state) {
+		this.state = state;
+	}
+
+	public String getEmailid() {
+		return emailid;
+	}
+
+	public void setEmailid(String emailid) {
+		this.emailid = emailid;
+	}
+
+	public String getContactNo() {
+		return contactno;
+	}
+
+	public void setContactNo(String contact_no) {
+		this.contactno = contact_no;
+	}
+
+	public String getWebsite() {
+		return website;
+	}
+
+	public void setWebsite(String website) {
+		this.website = website;
+	}
+
+	public String getCertificateIssueDate() {
+		return certificateissuedate;
+	}
+
+	public void setCertificateIssueDate(String certificate_issue_date) {
+		this.certificateissuedate = certificate_issue_date;
+	}
+
+	public String getCertificateValidityDate() {
+		return certificatevaliditydate;
+	}
+
+	public void setCertificateValidityDate(String certificate_validity_date) {
+		this.certificatevaliditydate = certificate_validity_date;
+	}
+
+	public int getEmployeeCount() {
+		return employeecount;
+	}
+
+	public void setEmployeeCount(int employee_count) {
+		this.employeecount = employee_count;
+	}
+
+	public int getYoe() {
+		return yoe;
+	}
+
+	public void setYoe(int yoe) {
+		this.yoe = yoe;
+	}
+
+	public void setVendorId(int vendor_id) {
+		this.vendorid = vendor_id;
+	}
+
+	public void setYos(int yos) {
+		this.yos = yos;
+	}
+
+	public int getVendorId() {
+		return vendorid;
+	}
+
+	public int getYos() {
+		return yos;
+	}
+
+	public void setCountryId(int country_id) {
+		this.countryid = country_id;
+	}
+
+	public float getAmount() {
+		return amount;
+	}
+
+	public void setAmount(float amount2) {
+		this.amount = amount2;
+	}
+
+}
