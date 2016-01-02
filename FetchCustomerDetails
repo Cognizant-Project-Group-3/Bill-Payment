@@ -1,0 +1,102 @@
+package com.billpayment.controller;
+
+import java.io.IOException;
+import java.sql.SQLException;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import com.billpayment.BO.CustomerBO;
+import com.billpayment.entity.Customer;
+import com.billpayment.exception.DatabaseException;
+
+/**
+ * Servlet implementation class FetchCustomerDetails
+ */
+public class FetchCustomerDetails extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+
+	/**
+	 * @see HttpServlet#HttpServlet()
+	 */
+	public FetchCustomerDetails() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	/**
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
+	 *      response)
+	 */
+	protected void doGet(HttpServletRequest request,
+			HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		doPost(request, response);
+	}
+
+	/**
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
+	 *      response)
+	 */
+	protected void doPost(HttpServletRequest request,
+			HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		HttpSession session = request.getSession();
+		if (session.getAttribute("username") == null) {
+			response.sendRedirect("index_pro.html");
+		}
+		int userid = Integer.parseInt(request.getParameter("userid"));
+		CustomerBO customerBO = new CustomerBO();
+		Customer customer = null;
+		try {
+			customer = customerBO.fetchCustomerDetails(userid);
+		} catch (DatabaseException e) {
+			// TODO: handle exception
+			Throwable throwable = e.getThrowable();
+			RequestDispatcher reqDispatchError = request
+					.getRequestDispatcher("/error.jsp");
+			if (throwable instanceof ClassNotFoundException) {
+				request.setAttribute("message", "Jar file for Oracle is absent");
+			} else if (throwable instanceof SQLException) {
+				request.setAttribute("message", "Exception related to database");
+			}
+			if (!response.isCommitted()) {
+				reqDispatchError.forward(request, response);
+				return;
+			}
+
+		}
+		String message = null;
+		RequestDispatcher requestDispatcher = request
+				.getRequestDispatcher("/UpdateCustomerDetails_pro.jsp");
+
+		if (customer.getCustid() == 0) {
+			message = "No such user exists";
+			RequestDispatcher reqDispatchError = request
+			.getRequestDispatcher("/error.jsp");
+			request.setAttribute("message", message);
+			if (!response.isCommitted()) {
+				reqDispatchError.forward(request, response);
+				return;
+			}
+		} else {
+			request.setAttribute("id", userid);
+			request.setAttribute("name", customer.getName());
+			request.setAttribute("address", customer.getAddress());
+			request.setAttribute("contact_no", customer.getContactNo());
+			request.setAttribute("country", customer.getCountryName());
+			request.setAttribute("state", customer.getStateName());
+			request.setAttribute("emailid", customer.getEmail());
+			request.setAttribute("vendor_type", customer.getVendorType());
+			request.setAttribute("vendor_name", customer.getVendorName());
+			request.setAttribute("card_no", customer.getCardNo());
+		}
+		if (!response.isCommitted())
+			requestDispatcher.forward(request, response);
+	}
+
+}
