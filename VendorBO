@@ -1,0 +1,194 @@
+package com.billpayment.BO;
+
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+
+import com.billpayment.dao.VendorDAO;
+import com.billpayment.entity.Vendor;
+import com.billpayment.exception.DatabaseException;
+
+public class VendorBO {
+
+	private static final Logger LOGGER = Logger
+			.getLogger(com.billpayment.BO.AdminBO.class);
+
+	// To calculate Year Of Survival as (Current Year-Year Of Establishment)
+	public void calculateYOS(Vendor vendor) {
+		final Date d_curr = new Date();
+		final SimpleDateFormat sdf1 = new SimpleDateFormat("YYYY");
+		final String year = sdf1.format(d_curr);
+		final int curr_year = Integer.parseInt(year);
+		int yos = 0;
+		final int yoe = vendor.getYoe();
+		yos = Math.abs(curr_year - yoe);
+		vendor.setYos(yos);
+
+	}
+
+	// To calculate amount based on vendor type
+	public void calculateAmount(Vendor vendor) {
+
+		float amount = 0f;
+		final String type = vendor.getType();
+		if (type.equalsIgnoreCase("Electricity")) {
+			amount = 1000;
+
+		}
+
+		else if (type.equalsIgnoreCase("Telephone")) {
+			amount = 2000;
+
+		}
+
+		else if (type.equalsIgnoreCase("Insurance")) {
+			amount = 1200;
+
+		} else if (type.equalsIgnoreCase("Tax")) {
+			amount = 700;
+
+		}
+		vendor.setAmount(amount);
+	}
+
+	// To insert a new Vendor record
+	public int insert(Vendor vendor) throws DatabaseException {
+		VendorDAO vendordao;
+
+		vendordao = new VendorDAO();
+		int status = 0;
+		try {
+			status = vendordao.insertRecord(vendor);
+			LOGGER.info("Record inserted properly.");
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			LOGGER.error("Jar for Oracle 10g not found.");
+			throw new DatabaseException(e);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			LOGGER.error("Exception related to database");
+			throw new DatabaseException(e);
+		}
+		return status;
+	}
+
+	// To fetch the details of an existing vendor for updation
+	public Vendor fetchVendorDetails(int userid) throws DatabaseException {
+		Vendor vendor = new Vendor();
+		VendorDAO vendorDAO = new VendorDAO();
+		try {
+			vendor = vendorDAO.fetchVendorDetails(userid);
+		} catch (ClassNotFoundException e) {
+			// TODO: handle exception
+			LOGGER.error("Jar for Oracle 10g not found.");
+			throw new DatabaseException(e);
+		} catch (SQLException e) {
+			// TODO: handle exception
+			LOGGER.error("Exception related to database");
+			throw new DatabaseException(e);
+		}
+		return vendor;
+	}
+
+	// To update the details of existing vendor
+	public int update(Vendor vendor) throws DatabaseException {
+		VendorDAO vendordao;
+
+		vendordao = new VendorDAO();
+		int status = 0;
+		try {
+			status = vendordao.updateRecord(vendor);
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			LOGGER.error("Jar for Oracle 10g not found.");
+			throw new DatabaseException(e);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			LOGGER.error("Exception related to database");
+			throw new DatabaseException(e);
+		}
+		return status;
+	}
+
+	//to fetch vendor names for telephone
+	public Map<String, String> fetchTelephone(String vendortype) {
+		ArrayList<String> vendorlist_telephone = new ArrayList<String>();
+		Map<String, String> telephone = new LinkedHashMap<String, String>();
+		VendorDAO vdao = new VendorDAO();
+		vendorlist_telephone = vdao.fetchVendorname("Telephone");
+		Iterator<String> itr_telephone = vendorlist_telephone.iterator();
+
+		while (itr_telephone.hasNext()) {
+
+			String s2 = itr_telephone.next();
+
+			telephone.put(s2, s2);
+		}
+		return telephone;
+
+	}
+
+	//to fetch vendor names for tax
+	public Map<String, String> fetchTax(String vendortype) {
+		ArrayList<String> vendorlist_tax = new ArrayList<String>();
+		Map<String, String> tax = new LinkedHashMap<String, String>();
+		VendorDAO vdao = new VendorDAO();
+		vendorlist_tax = vdao.fetchVendorname("Tax");
+
+		Iterator<String> itr_tax = vendorlist_tax.iterator();
+
+		while (itr_tax.hasNext()) {
+
+			String s2 = itr_tax.next();
+
+			tax.put(s2, s2);
+		}
+		return tax;
+
+	}
+
+	//to fetch vendor names for electricity
+	public Map<String, String> fetchElectricity(String vendortype) {
+		// TODO Auto-generated method stub
+		ArrayList<String> vendorlist_electricity = new ArrayList<String>();
+		Map<String, String> electricity = new LinkedHashMap<String, String>();
+		VendorDAO vdao = new VendorDAO();
+		vendorlist_electricity = vdao.fetchVendorname("Electricity");
+
+		Iterator<String> itr_electricity = vendorlist_electricity.iterator();
+
+		while (itr_electricity.hasNext()) {
+
+			String s2 = itr_electricity.next();
+
+			electricity.put(s2, s2);
+		}
+		return electricity;
+	}
+
+	//to fetch vendor names for insurance
+	public Map<String, String> fetchInsurance(String vendortype) {
+		// TODO Auto-generated method stub
+		ArrayList<String> vendorlist_insurance = new ArrayList<String>();
+		Map<String, String> insurance = new LinkedHashMap<String, String>();
+		VendorDAO vdao = new VendorDAO();
+		vendorlist_insurance = vdao.fetchVendorname("Insurance");
+
+		Iterator<String> itr_insurance = vendorlist_insurance.iterator();
+
+		while (itr_insurance.hasNext()) {
+
+			String s2 = itr_insurance.next();
+
+			insurance.put(s2, s2);
+		}
+		return insurance;
+
+	}
+}
