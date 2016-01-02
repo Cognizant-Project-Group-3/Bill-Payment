@@ -1,0 +1,291 @@
+package com.billpayment.dao;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+
+import com.billpayment.entity.Vendor;
+import com.billpayment.helper.DBUtil;
+
+public class VendorDAO {
+
+	// module for vendor insert
+	public int insertRecord(final Vendor vendor) throws ClassNotFoundException,
+			SQLException {
+		Connection connvendor = null;
+		PreparedStatement psvendor;
+
+		// TODO Auto-generated method stub
+		int status = 0;
+		int max = 10000;
+		int vendorid = 0;
+		String countryid = null;
+		String cname, sname;
+		String vname, vtype;
+		cname = vendor.getCountry();
+		sname = vendor.getState();
+
+		vname = vendor.getName();
+		vtype = vendor.getType();
+
+		String sql_vendor_countryid = "Select ID from COUNTRY where COUNTRY=? and STATE=?";
+		String sql_vendorid = "Select max(ID) from VENDOR";
+		String sql_insertvendor = "INSERT INTO vendor VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+		String sq1_check_vendor = "Select ID from VENDOR where NAME=? and TYPE=?";
+		try {
+			connvendor = DBUtil.createConnection();
+			Statement stmt = connvendor.createStatement();
+
+			Date d_issue = new Date();
+			Date d_validity = new Date();
+			java.sql.Date sqlDate_issue = null;
+			java.sql.Date sqlDate_validity = null;
+
+			sqlDate_issue = new java.sql.Date(d_issue.getTime());
+
+			Calendar c = Calendar.getInstance();
+
+			c.setTime(d_validity);
+
+			c.add(Calendar.YEAR, 15);
+
+			d_validity = c.getTime();
+
+			sqlDate_validity = new java.sql.Date(d_validity.getTime());
+
+			// TODO Auto-generated catch block
+			psvendor = connvendor.prepareStatement(sql_vendor_countryid);
+			psvendor.setString(1, cname);
+			psvendor.setString(2, sname);
+			ResultSet rscountry_id = psvendor.executeQuery();
+			if (rscountry_id.next()) {
+				countryid = rscountry_id.getString(1);
+			}
+			vendor.setVendorId(max);
+
+			ResultSet rs_vendorid = stmt.executeQuery(sql_vendorid);
+			if (rs_vendorid.next()) {
+				vendorid = rs_vendorid.getInt(1);
+				if (vendorid == 0) {
+					vendor.setVendorId(max);
+				} else {
+					max = vendorid + 1;
+					vendor.setVendorId(max);
+				}
+			}
+
+			psvendor = connvendor.prepareStatement(sq1_check_vendor);
+			psvendor.setString(1, vname);
+			psvendor.setString(2, vtype);
+			ResultSet rs_check_id = psvendor.executeQuery();
+			if (!rs_check_id.next()) {
+				psvendor = connvendor.prepareStatement(sql_insertvendor);
+				psvendor.setInt(1, vendor.getVendorId());
+				psvendor.setString(2, countryid);
+				psvendor.setString(3, vendor.getCompanyRegNo());
+				psvendor.setString(4, vendor.getType());
+				psvendor.setInt(5, vendor.getYos());
+				psvendor.setDate(6, sqlDate_issue);
+				psvendor.setDate(7, sqlDate_validity);
+				psvendor.setString(8, vendor.getContactNo());
+				psvendor.setString(9, vendor.getWebsite());
+				psvendor.setString(10, vendor.getEmailid());
+				psvendor.setFloat(11, vendor.getAmount());
+				psvendor.setString(12, vendor.getName());
+				psvendor.setString(13, vendor.getAddress());
+				psvendor.setInt(14, vendor.getEmployeeCount());
+
+				status = psvendor.executeUpdate();
+				if (status == 1) {
+					status = max;
+				}
+			}
+
+		} finally {
+			if (connvendor != null) {
+				try {
+					DBUtil.closeConnection();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+		return status;
+
+	}
+
+	// module for vendor fetch for update
+	public Vendor fetchVendorDetails(int userid) throws ClassNotFoundException,
+			SQLException {
+		Connection con = null;
+		Vendor vendor = new Vendor();
+		PreparedStatement psfetch = null;
+		ResultSet rsfetch = null;
+		try {
+			con = DBUtil.createConnection();
+
+			String sql = "SELECT * FROM VENDOR WHERE ID=?";
+
+			psfetch = con.prepareStatement(sql);
+			psfetch.setInt(1, userid);
+			rsfetch = psfetch.executeQuery();
+			while (rsfetch.next()) {
+
+				if (rsfetch.getInt("ID") == userid) {
+					int yoe;
+					int yos;
+					yos = rsfetch.getInt("yos");
+					Calendar cal = Calendar.getInstance();
+					int year = cal.get(Calendar.YEAR);
+					yoe = year - yos;
+
+					String country_id = rsfetch.getString("country_id");
+					PreparedStatement stmt = con
+							.prepareStatement("SELECT * FROM COUNTRY WHERE ID='"
+									+ country_id + "'");
+					ResultSet rset = stmt.executeQuery();
+					String country = null;
+					String state = null;
+
+					while (rset.next()) {
+						if (rset.getString("ID").equals(country_id)) {
+							country = rset.getString("COUNTRY");
+							state = rset.getString("STATE");
+						}
+					}
+
+					Statement stmt2 = con.createStatement();
+					ResultSet rset2 = stmt2
+							.executeQuery("SELECT CUSTOMER_ID,VENDOR_ID FROM CV_MASTER WHERE VENDOR_ID='"
+									+ userid + "'");
+					int customer_count = 0;
+					while (rset2.next()) {
+
+						if (rset2.getInt("VENDOR_ID") == userid) {
+							customer_count++;
+						}
+					}
+					vendor.setVendorId(userid);
+					vendor.setName(rsfetch.getString("NAME"));
+					vendor.setCompanyRegNo(rsfetch.getString("COMPANY_REG_NO"));
+					vendor.setType(rsfetch.getString("TYPE"));
+					vendor.setAddress(rsfetch.getString("ADDRESS"));
+					vendor.setCountry(country);
+					vendor.setState(state);
+					vendor.setEmailid(rsfetch.getString("EMAIL"));
+					vendor.setContactNo(rsfetch.getString("CONTACT_NO"));
+					vendor.setWebsite(rsfetch.getString("WEBSITE"));
+					vendor.setEmployeeCount(rsfetch.getInt("EMPLOYEE_COUNT"));
+					vendor.setYoe(yoe);
+
+				}
+
+			}
+
+		} finally {
+
+			DBUtil.closeConnection();
+			if (con != null) {
+				con.close();
+
+			}
+
+		}
+		return vendor;
+	}
+
+	// module for vendor update
+	public int updateRecord(Vendor v) throws ClassNotFoundException,
+			SQLException {
+		Connection connvendor = null;
+		PreparedStatement psvendor;
+
+		// TODO Auto-generated method stub
+		int status = 0;
+		String countryid = null;
+		String cname, sname;
+		cname = v.getCountry();
+		sname = v.getState();
+
+		String sql1 = "Select ID from COUNTRY where COUNTRY='" + cname
+				+ "' and STATE='" + sname + "'";
+
+		String sql = "UPDATE VENDOR SET NAME=?,COUNTRY_ID=?,COMPANY_REG_NO=?,TYPE=?,YOS=?,CONTACT_NO=?,WEBSITE=?,EMAIL=?,ADDRESS=?,EMPLOYEE_COUNT=? WHERE ID=?";
+
+		try {
+			connvendor = DBUtil.createConnection();
+			Statement stmt = connvendor.createStatement();
+
+			ResultSet rscountry = stmt.executeQuery(sql1);
+			if (rscountry.next()) {
+				countryid = rscountry.getString(1);
+			}
+
+			psvendor = connvendor.prepareStatement(sql);
+
+			psvendor.setString(1, v.getName());
+			psvendor.setString(2, countryid);
+			psvendor.setString(3, v.getCompanyRegNo());
+			psvendor.setString(4, v.getType());
+			psvendor.setInt(5, v.getYos());
+			psvendor.setString(6, v.getContactNo());
+			psvendor.setString(7, v.getWebsite());
+			psvendor.setString(8, v.getEmailid());
+			psvendor.setString(9, v.getAddress());
+			psvendor.setInt(10, v.getEmployeeCount());
+			psvendor.setInt(11, v.getVendorId());
+
+			status = psvendor.executeUpdate();
+		} finally {
+			if (connvendor != null) {
+				try {
+					DBUtil.closeConnection();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+		return status;
+
+	}
+
+	private static Connection connvendor = null;
+
+	//Module to fetch vendor names corresponding to a vendor type
+	public ArrayList<String> fetchVendorname(String type) {
+		ArrayList<String> vendorlist = new ArrayList<String>();
+		try {
+			connvendor = DBUtil.createConnection();
+
+			PreparedStatement psvendor = null;
+			String vendor = null;
+
+			String sql1 = "select NAME from VENDOR where TYPE=?";
+			psvendor = connvendor.prepareStatement(sql1);
+			psvendor.setString(1, type);
+
+			ResultSet rs_vendor = psvendor.executeQuery();
+			while (rs_vendor.next()) {
+				vendor = rs_vendor.getString(1);
+
+				vendorlist.add(vendor);
+			}
+
+		} catch (ClassNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return vendorlist;
+	}
+}
