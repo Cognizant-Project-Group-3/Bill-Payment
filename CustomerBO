@@ -1,0 +1,155 @@
+package com.billpayment.BO;
+
+import java.sql.SQLException;
+
+import org.apache.log4j.Logger;
+
+import com.billpayment.dao.CustomerDAO;
+import com.billpayment.entity.Customer;
+import com.billpayment.exception.DatabaseException;
+
+public class CustomerBO {
+
+	private static final Logger LOGGER = Logger
+			.getLogger(com.billpayment.BO.CustomerBO.class);
+
+	//to calculate document number for a customer by concatenating document code with document number
+	public void calculatedocumentNO(final Customer customer)
+			throws DatabaseException {
+		final String document_name = customer.getDocumentName();
+		final String document_no = customer.getDocumentNo();
+
+		StringBuffer document_detail_number1 = new StringBuffer();
+		if (document_name.equalsIgnoreCase("VoterId")) {
+			document_detail_number1 = document_detail_number1.append("GMV")
+					.append(document_no);
+		} else if (document_name.equalsIgnoreCase("Passport")) {
+			document_detail_number1 = document_detail_number1.append("PASS")
+					.append(document_no);
+
+		} else if (document_name.equalsIgnoreCase("DrivingLicense")) {
+			document_detail_number1 = document_detail_number1.append("DL")
+					.append(document_no);
+
+		} else if (document_name.equalsIgnoreCase("PANCard")) {
+			document_detail_number1 = document_detail_number1.append("PAN")
+					.append(document_no);
+
+		}
+		String document_detail_number = null;
+		document_detail_number = document_detail_number1.toString();
+		customer.setDocumentdetailnumber(document_detail_number);
+
+	}
+
+	//to insert customer records
+	public int insert(Customer customer) throws DatabaseException {
+		CustomerDAO customerDAO;
+
+		customerDAO = new CustomerDAO();
+		int status = 0;
+		int status_both = 0;
+		try {
+			status = customerDAO.insertCustRecord(customer);
+
+			if (status != 0) {
+
+				status_both = customerDAO.insertCVMaster(customer);
+				return status;
+			} else {
+				return status;
+			}
+		} catch (ClassNotFoundException e) {
+			// TODO: handle exception
+			LOGGER.error("Jar for Oracle 10g not found.");
+			throw new DatabaseException(e);
+		} catch (SQLException e) {
+			// TODO: handle exception
+			LOGGER.error("Exception related to database");
+			throw new DatabaseException(e);
+		}
+	}
+
+	//to fetch customer details for update
+	public Customer fetchCustomerDetails(int userid) throws DatabaseException {
+		Customer customer = new Customer();
+		CustomerDAO customerDAO = new CustomerDAO();
+		try {
+			customer = customerDAO.fetchCustomerDetails(userid);
+		} catch (ClassNotFoundException e) {
+			// TODO: handle exception
+			LOGGER.error("Jar for Oracle 10g not found.");
+			throw new DatabaseException(e);
+		} catch (SQLException e) {
+			// TODO: handle exception
+			LOGGER.error("Exception related to database");
+			throw new DatabaseException(e);
+		}
+		return customer;
+	}
+
+	//to update customer records
+	public int update(Customer customer) throws DatabaseException {
+		CustomerDAO customerDAO;
+
+		customerDAO = new CustomerDAO();
+		int status = 0;
+
+		try {
+			status = customerDAO.updateRecord(customer);
+		} catch (ClassNotFoundException e) {
+			// TODO: handle exception
+			LOGGER.error("Jar for Oracle 10g not found.");
+			throw new DatabaseException(e);
+		} catch (SQLException e) {
+			// TODO: handle exception
+			LOGGER.error("Exception related to database");
+			throw new DatabaseException(e);
+		}
+		return status;
+	}
+
+	//to add another vendor to a customer
+	public int addVendor(Customer customer) throws DatabaseException {
+		// TODO Auto-generated method stub
+		CustomerDAO customerDAO = new CustomerDAO();
+		int status = 0;
+		try {
+			status = customerDAO.insertCVMaster(customer);
+		} catch (ClassNotFoundException e) {
+			// TODO: handle exception
+			LOGGER.error("Jar for Oracle 10g not found.");
+			throw new DatabaseException(e);
+		} catch (SQLException e) {
+			// TODO: handle exception
+			LOGGER.error("Exception related to database");
+			throw new DatabaseException(e);
+		}
+		return status;
+
+	}
+
+	//to check if a vendor exists corresponding to a customer
+	public boolean validateVendor(Customer customer) throws DatabaseException {
+		// TODO Auto-generated method stub
+		
+		CustomerDAO customerDAO = new CustomerDAO();
+		
+		boolean status = false;
+		try {
+			status = customerDAO.validateVendor( customer);
+		} catch (ClassNotFoundException e) {
+			// TODO: handle exception
+			LOGGER.error("Jar for Oracle 10g not found.");
+			throw new DatabaseException(e);
+		} catch (SQLException e) {
+			// TODO: handle exception
+			LOGGER.error("Exception related to database");
+			throw new DatabaseException(e);
+		}
+	
+		return status;
+	}
+
+	
+}
