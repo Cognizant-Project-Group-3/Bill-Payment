@@ -1,0 +1,125 @@
+package com.billpayment.controller;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.sql.SQLException;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import com.billpayment.BO.BillPaymentBO;
+import com.billpayment.BO.CustomerBO;
+import com.billpayment.entity.Customer;
+import com.billpayment.exception.DatabaseException;
+
+/**
+ * Servlet implementation class AddVendorServlet
+ */
+public class AddVendorServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+
+	/**
+	 * @see HttpServlet#HttpServlet()
+	 */
+	public AddVendorServlet() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	/**
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
+	 *      response)
+	 */
+	protected void doGet(HttpServletRequest request,
+			HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		doPost(request, response);
+	}
+
+	/**
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
+	 *      response)
+	 */
+	protected void doPost(HttpServletRequest request,
+			HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		HttpSession session = request.getSession();
+		if (session.getAttribute("username") == null) {
+			response.sendRedirect("index_pro.html");
+		}
+
+		PrintWriter out = response.getWriter();
+		response.setContentType("text/html");
+
+		boolean isCustomerValid = false;
+		boolean isVendorValid = false;
+
+		final int c_id = Integer.parseInt(request.getParameter("customerId"));
+		final String v_name = request.getParameter("vendorname");
+		final String v_type = request.getParameter("vendortype");
+		final BillPaymentBO billPaymentBO = new BillPaymentBO();
+		final CustomerBO customerBO=new CustomerBO();
+		try {
+
+			// validate customer
+			isCustomerValid = billPaymentBO.validateCustomer(c_id);
+			if (isCustomerValid == false) {
+				out.print("Invalid Customer ID");
+			}
+
+		
+			// fetch vendor Id
+			Customer customer = new Customer();
+			customer.setCustid(c_id);
+			customer.setVendorType(v_type);
+			customer.setVendorName(v_name);
+			
+			
+			// validate vendor
+			isVendorValid =customerBO.validateVendor(customer);
+			if (isVendorValid == false && isCustomerValid != false) {
+				RequestDispatcher reqDispatchError = request
+				.getRequestDispatcher("/WrongVendor_pro.html");
+				//out.print("<a href='AddVendor_pro.html'>Try Again</a>");
+				reqDispatchError.forward(request, response);
+			}
+			else
+			{
+			int status = customerBO.addVendor(customer);
+			if (status == 1) {
+				RequestDispatcher reqDispatchError = request
+				.getRequestDispatcher("/OnAddingVendor_pro.html");
+				//out.print("<a href='OnAddingVendor_pro.html'>Home</a><br><br>");
+				reqDispatchError.forward(request, response);
+
+			} else {
+				RequestDispatcher reqDispatchError = request
+				.getRequestDispatcher("/AddVendor_pro.html");
+				//out.print("<a href='AddVendor_pro.html'>Try Again</a>");
+				reqDispatchError.forward(request, response);
+
+			}
+			
+			}	
+     
+		} catch (DatabaseException e) {
+			// TODO: handle exception
+			Throwable throwable = e.getThrowable();
+			RequestDispatcher reqDispatchError = request
+					.getRequestDispatcher("/error.jsp");
+			if (throwable instanceof ClassNotFoundException) {
+				request.setAttribute("message", "Jar file for Oracle is absent");
+			} else if (throwable instanceof SQLException) {
+				request.setAttribute("message", "Enter Valid Customer ID!");
+			}
+			if (!response.isCommitted()) {
+				reqDispatchError.forward(request, response);
+				return;
+			}
+		}
+	}
+}
