@@ -1,0 +1,50 @@
+package com.billpayment.dao;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+
+import com.billpayment.helper.DBUtil;
+
+public class StateDAO  {
+	private Connection connstate;
+
+	private PreparedStatement preparestate;
+
+
+	//to fetch states corresponding to a country
+	public ArrayList<String> fetchIndiaStates(String country){
+		ArrayList<String> stateIndia = new ArrayList<String>();
+	
+			try {
+				connstate = DBUtil.createConnection();
+
+				String state = null;
+			
+				String sql1 = "select STATE from COUNTRY where COUNTRY=?";
+				preparestate = connstate.prepareStatement(sql1);
+				preparestate.setString(1, country);
+
+				ResultSet rs_state =preparestate.executeQuery();
+				while (rs_state.next()) {
+				state = rs_state.getString(1);
+			
+					 stateIndia .add(state);
+			} 
+			}catch (ClassNotFoundException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+
+	
+		
+		return stateIndia;
+	}
+
+	
+}
