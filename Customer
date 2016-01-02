@@ -1,0 +1,168 @@
+package com.billpayment.entity;
+
+import java.io.Serializable;
+
+public class Customer implements Serializable {
+	/**
+      * 
+       */
+	private static final long serialVersionUID = -2451065804886631225L;
+	private int custid;
+	private String name;
+	private String contactNo;
+	private String address;
+	private String regDate;
+	private String documentNo;
+	private String email;
+	private String countryId;
+	private String cardNo;
+	private String vendorType;
+	private String vendorName;
+	private String documentName;
+	private String countryName;
+	private String stateName;
+	private String documentDetailNumber;
+
+	public Customer(String name, String contactNo, String address,
+			String documentNo, String email, String cardNo, String vendorType,
+			String vendorName, String documentName, String countryName,
+			String stateName) {
+		super();
+		this.name = name;
+		this.contactNo = contactNo;
+		this.address = address;
+		this.documentNo = documentNo;
+		this.email = email;
+		this.cardNo = cardNo;
+		this.vendorType = vendorType;
+		this.vendorName = vendorName;
+		this.documentName = documentName;
+		this.countryName = countryName;
+		this.stateName = stateName;
+	}
+
+	public Customer() {
+		// TODO Auto-generated constructor stub
+	}
+
+	public String getCountryName() {
+		return countryName;
+	}
+
+	public void setCountryName(String countryName) {
+		this.countryName = countryName;
+	}
+
+	public String getStateName() {
+		return stateName;
+	}
+
+	public void setStateName(String stateName) {
+		this.stateName = stateName;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getContactNo() {
+		return contactNo;
+	}
+
+	public void setContactNo(String contactNo) {
+		this.contactNo = contactNo;
+	}
+
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
+	public String getRegDate() {
+		return regDate;
+	}
+
+	public void setRegDate(String regDate) {
+		this.regDate = regDate;
+	}
+
+	public String getDocumentNo() {
+		return documentNo;
+	}
+
+	public void setDocumentNo(String documentNo) {
+		this.documentNo = documentNo;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getCountryId() {
+		return countryId;
+	}
+
+	public void setCountryId(String countryId) {
+		this.countryId = countryId;
+	}
+
+	public String getCardNo() {
+		return cardNo;
+	}
+
+	public void setCardNo(String cardNo) {
+		this.cardNo = cardNo;
+	}
+
+	public String getVendorType() {
+		return vendorType;
+	}
+
+	public void setVendorType(String vendorType) {
+		this.vendorType = vendorType;
+	}
+
+	public String getVendorName() {
+		return vendorName;
+	}
+
+	public void setVendorName(String vendorName) {
+		this.vendorName = vendorName;
+	}
+
+	public String getDocumentName() {
+		return documentName;
+	}
+
+	public void setDocumentName(String documentName) {
+		this.documentName = documentName;
+	}
+
+	public String getDocumentdetailnumber() {
+		return documentDetailNumber;
+	}
+
+	public void setDocumentdetailnumber(String documentDetailNumber) {
+		this.documentDetailNumber = documentDetailNumber;
+	}
+
+	public int getCustid() {
+		return custid;
+	}
+
+	public void setCustid(int custid) {
+		this.custid = custid;
+	}
+
+}
