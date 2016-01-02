@@ -1,0 +1,138 @@
+package com.billpayment.controller;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.sql.SQLException;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import com.billpayment.BO.CustomerBO;
+import com.billpayment.entity.Customer;
+import com.billpayment.exception.DatabaseException;
+
+/**
+ * Servlet implementation class UpdateCustomerServlet
+ */
+public class UpdateCustomerServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+
+	/**
+	 * @see HttpServlet#HttpServlet()
+	 */
+	public UpdateCustomerServlet() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	/**
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
+	 *      response)
+	 */
+	protected void doGet(HttpServletRequest request,
+			HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		doPost(request, response);
+	}
+
+	/**
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
+	 *      response)
+	 */
+	protected void doPost(HttpServletRequest request,
+			HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		HttpSession session = request.getSession();
+		if (session.getAttribute("username") == null) {
+			response.sendRedirect("index_pro.html");
+		}
+
+		response.setContentType("text/html");
+		final PrintWriter out = response.getWriter();
+
+		final int userid = Integer.parseInt(request.getParameter("id"));
+		final String name = request.getParameter("name");
+		final String address = request.getParameter("address");
+		final String contact_no = request.getParameter("contact_no");
+		final String country = request.getParameter("country");
+		final String state = request.getParameter("state");
+		final String emailid = request.getParameter("email");
+		final String card_no = request.getParameter("card_no");
+		final Customer customer = new Customer();
+
+		customer.setCustid(userid);
+		customer.setName(name);
+		customer.setAddress(address);
+		customer.setContactNo(contact_no);
+		customer.setCountryName(country);
+		customer.setStateName(state);
+		customer.setEmail(emailid);
+		customer.setCardNo(card_no);
+
+		int status = 0;
+
+		final CustomerBO customerBO = new CustomerBO();
+
+		try {
+
+			status = customerBO.update(customer);
+			if (status == 1) {
+				out.print("<a href='homepage.html'>Home</a><br><br>");
+				out.print("Customer Record was updated successfully<br>");
+
+				out.print("Your Details are:<br>");
+				CustomerBO custBO = new CustomerBO();
+				Customer cust = new Customer();
+				cust = custBO.fetchCustomerDetails(userid);
+
+				request.setAttribute("id", cust.getCustid());
+				request.setAttribute("name", cust.getName());
+				request.setAttribute("phone", cust.getContactNo());
+				request.setAttribute("add", cust.getAddress());
+				request.setAttribute("country", cust.getCountryName());
+				request.setAttribute("state", cust.getStateName());
+				request.setAttribute("email", cust.getEmail());
+				request.setAttribute("card", cust.getCardNo());
+
+				if (!response.isCommitted()) {
+				RequestDispatcher requestDispatcher = request
+						.getRequestDispatcher("/CustomerDetailsDisplay_pro.jsp");
+				requestDispatcher.forward(request, response);
+				}
+
+				/*
+				 * out.print("Customer Id: " + cust.getCustid() + "<br>");
+				 * out.print("Name: " + cust.getName() + "<br>");
+				 * out.print("Contact Number: " + cust.getContactNo() + "<br>");
+				 * out.print("Address: " + cust.getAddress() + "<br>");
+				 * out.print("Country: " + cust.getCountryName() + "<br>");
+				 * out.print("State: " + cust.getStateName() + "<br>");
+				 * out.print("Email: " + cust.getEmail() + "<br>");
+				 * out.print("Card Number: " + cust.getCardNo() + "<br>");
+				 */
+			} else {
+				out.print("Customer Record was not updated successfully<br>");
+				out.print("<a href='UpdateCustomer_pro.html'>Try Again</a>");
+			}
+		} catch (DatabaseException e) {
+			// TODO: handle exception
+			Throwable throwable = e.getThrowable();
+			RequestDispatcher reqDispatchError = request
+					.getRequestDispatcher("/error.jsp");
+			if (throwable instanceof ClassNotFoundException) {
+				request.setAttribute("message", "Jar file for Oracle is absent");
+			} else if (throwable instanceof SQLException) {
+				request.setAttribute("message", "Exception related to database");
+			}
+			if (!response.isCommitted()) {
+				reqDispatchError.forward(request, response);
+				return;
+			}
+
+		}
+	}
+}
