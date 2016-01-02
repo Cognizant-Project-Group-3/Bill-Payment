@@ -1,0 +1,119 @@
+package com.billpayment.BO;
+
+import java.sql.SQLException;
+
+import org.apache.log4j.Logger;
+
+import com.billpayment.dao.BillDAO;
+import com.billpayment.exception.DatabaseException;
+
+public class BillPaymentBO {
+
+	private static final Logger LOGGER = Logger
+			.getLogger(com.billpayment.BO.BillPaymentBO.class);
+	BillDAO billDAO = new BillDAO();
+
+	// To check if the customer has entered a valid vendor type and name
+	public boolean validateVendor(String v_name, String v_type)
+			throws DatabaseException {
+
+		int vendor_id = 0;
+
+		try {
+			vendor_id = billDAO.getVendorId(v_name, v_type);
+		} catch (ClassNotFoundException e) {
+			// TODO: handle exception
+			LOGGER.error("Jar for Oracle 10g not found.", e);
+			throw new DatabaseException(e);
+		} catch (SQLException e) {
+			// TODO: handle exception
+			LOGGER.error("Exception related to database", e);
+			throw new DatabaseException(e);
+		}
+		if (vendor_id != 0)
+			return true;
+		else
+			return false;
+	}// end validate()
+
+	// To check if the id is a valid customer id
+	public boolean validateCustomer(int c_id) throws DatabaseException {
+		// TODO Auto-generated method stub
+		int customer_id = 0;
+
+		try {
+			customer_id = billDAO.getCustomerId(c_id);
+		} catch (ClassNotFoundException e) {
+			// TODO: handle exception
+			LOGGER.error("Jar for Oracle 10g not found.", e);
+			throw new DatabaseException(e);
+		} catch (SQLException e) {
+			// TODO: handle exception
+			LOGGER.error("Exception related to database", e);
+			throw new DatabaseException(e);
+		}
+		if (customer_id != 0)
+			return true;
+		else
+			return false;
+
+	}
+
+	// To get the pending amount if vendor and customer is validated
+	public float getPendingAmount(int c_id, String v_name, String v_type)
+			throws DatabaseException {
+		// TODO Auto-generated method stub
+		int vendor_id = 0;
+		float pendingAmount = 0.0f;
+		try {
+			vendor_id = billDAO.getVendorId(v_name, v_type);
+			pendingAmount = billDAO.pendingAmount(c_id, vendor_id);
+		} catch (ClassNotFoundException e) {
+			// TODO: handle exception
+			LOGGER.error("Jar for Oracle 10g not found.", e);
+			throw new DatabaseException(e);
+		} catch (SQLException e) {
+			// TODO: handle exception
+			LOGGER.error("Exception related to database", e);
+			throw new DatabaseException(e);
+		}
+		return pendingAmount;
+	}// end getPendingAmount()
+
+	// To update the pending amount after successful bill payment
+	public int updatePendingAmount(int customerId, String vendorName,
+			String vendorType, float amountToPay, float pendingAmount)
+			throws DatabaseException {
+		// TODO Auto-generated method stub
+		float newAmount = pendingAmount - amountToPay;
+		int vendor_id = 0;
+		int status;
+		try {
+			vendor_id = billDAO.getVendorId(vendorName, vendorType);
+		} catch (ClassNotFoundException e) {
+			// TODO: handle exception
+			LOGGER.error("Jar for Oracle 10g not found.");
+			throw new DatabaseException(e);
+		} catch (SQLException e) {
+			// TODO: handle exception
+			LOGGER.error("Exception related to database");
+			throw new DatabaseException(e);
+		}
+
+		try {
+			status = billDAO.updatePendingAmountDao(customerId, vendor_id,
+					newAmount);
+		} catch (ClassNotFoundException e) {
+			// TODO: handle exception
+			LOGGER.error("Jar for Oracle 10g not found.", e);
+			throw new DatabaseException(e);
+		} catch (SQLException e) {
+			// TODO: handle exception
+			LOGGER.error("Exception related to database", e);
+			throw new DatabaseException(e);
+		}
+		return status;
+
+	}
+
+}// end class
