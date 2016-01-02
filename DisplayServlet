@@ -1,0 +1,73 @@
+package com.billpayment.controller;
+
+import java.io.IOException;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.billpayment.BO.VendorBO;
+import com.google.gson.Gson;
+
+/**
+ * Servlet implementation class Action
+ */
+public class DisplayServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+
+	/**
+	 * @see HttpServlet#HttpServlet()
+	 */
+	public DisplayServlet() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	/**
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
+	 *      response)
+	 */
+
+	protected void doGet(HttpServletRequest request,
+			HttpServletResponse response) throws ServletException, IOException {
+		doPost(request, response);
+	}
+
+	/**
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
+	 *      response)
+	 */
+	protected void doPost(HttpServletRequest request,
+			HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		String vendortype = request.getParameter("vtype");
+		VendorBO vBO = new VendorBO();
+
+		Map<String, String> tax = new LinkedHashMap<String, String>();
+		Map<String, String> telephone = new LinkedHashMap<String, String>();
+		Map<String, String> electricity = new LinkedHashMap<String, String>();
+		Map<String, String> insurance = new LinkedHashMap<String, String>();
+		telephone = vBO.fetchTelephone(vendortype);
+		tax = vBO.fetchTax(vendortype);
+		electricity = vBO.fetchElectricity(vendortype);
+		insurance = vBO.fetchInsurance(vendortype);
+
+		String json = null;
+		if (vendortype.equals("Telephone")) {
+			json = new Gson().toJson(telephone);
+		} else if (vendortype.equals("Tax")) {
+			json = new Gson().toJson(tax);
+		} else if (vendortype.equals("Electricity")) {
+			json = new Gson().toJson(electricity);
+		} else if (vendortype.equals("Insurance")) {
+			json = new Gson().toJson(insurance);
+		}
+		response.setContentType("application/json");
+		response.setCharacterEncoding("UTF-8");
+		response.getWriter().write(json);
+	}
+
+}
