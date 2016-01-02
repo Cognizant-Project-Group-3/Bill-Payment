@@ -1,0 +1,296 @@
+package com.billpayment.dao;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Date;
+
+import com.billpayment.entity.Customer;
+import com.billpayment.helper.DBUtil;
+
+public class CustomerDAO {
+
+	
+	private Connection conncustomer;
+
+	private PreparedStatement prepareCustomer;
+
+	// module for customer insert
+	public int insertCustRecord(Customer customer)
+			throws ClassNotFoundException, SQLException {
+		// TODO Auto-generated method stub
+		int status = 0;
+		int customer_id = 1000;
+		int id = 1000;
+		String countryid = null;
+		int cust_id = 0;
+		String cname, sname;
+		cname = customer.getCountryName();
+		sname = customer.getStateName();
+		String sql_cust_countryid = "Select ID from COUNTRY where COUNTRY=? and STATE=?";
+
+		String sql_cust_insert = "INSERT INTO customer VALUES(?,?,?,?,?,?,?,?,?)";
+
+		String sql_customerid = "Select max(ID) from CUSTOMER";
+		try {
+			conncustomer = DBUtil.createConnection();
+			Statement stmt = conncustomer.createStatement();
+
+			Date date_reg = new Date();
+			java.sql.Date sqlDate_reg = null;
+			sqlDate_reg = new java.sql.Date(date_reg.getTime());
+
+			prepareCustomer = conncustomer.prepareStatement(sql_cust_countryid);
+			prepareCustomer.setString(1, cname);
+			prepareCustomer.setString(2, sname);
+			ResultSet rscountry_id = prepareCustomer.executeQuery();
+			if (rscountry_id.next()) {
+				countryid = rscountry_id.getString(1);
+			}
+			customer.setCountryId(countryid);
+
+			ResultSet rscust_id = stmt.executeQuery(sql_customerid);
+			if (rscust_id.next()) {
+				id = rscust_id.getInt(1);
+				if (id == 0) {
+					customer_id = 100;
+				} else
+					customer_id = id + 1;
+			}
+			customer.setCustid(customer_id);
+
+			prepareCustomer = conncustomer.prepareStatement(sql_cust_insert);
+
+			prepareCustomer.setInt(1, customer.getCustid());
+			prepareCustomer.setString(2, customer.getName());
+			prepareCustomer.setString(3, customer.getContactNo());
+			prepareCustomer.setString(4, customer.getAddress());
+			prepareCustomer.setDate(5, sqlDate_reg);
+			prepareCustomer.setString(6, customer.getDocumentdetailnumber());
+			prepareCustomer.setString(7, customer.getEmail());
+			prepareCustomer.setString(8, customer.getCountryId());
+			prepareCustomer.setString(9, customer.getCardNo());
+
+			status = prepareCustomer.executeUpdate();
+			if (status == 1) {
+				cust_id = customer.getCustid();
+
+			}
+
+		} finally {
+			DBUtil.closeConnection();
+			if (conncustomer != null) {
+
+				conncustomer.close();
+
+			}
+		}
+		return cust_id;
+
+	}
+
+	// Module for record insertion in CV Master
+
+	public int insertCVMaster(Customer customer) throws ClassNotFoundException,
+			SQLException {
+		// TODO Auto-generated method stub
+		int status = 0;
+		String vendorName = null;
+		String vendorType = null;
+		int vendorid = 0;
+		float amount = 0f;
+		String sql_cust_vendorid = "Select ID,AMOUNT from VENDOR where NAME=? and TYPE=?";
+		String sqlinsert_cv_master = "Insert into CV_MASTER values(?,?,?)";
+		try {
+			conncustomer = DBUtil.createConnection();
+			vendorName = customer.getVendorName();
+			vendorType = customer.getVendorType();
+			prepareCustomer = conncustomer.prepareStatement(sql_cust_vendorid);
+			prepareCustomer.setString(1, vendorName);
+			prepareCustomer.setString(2, vendorType);
+			ResultSet rs_vendorid = prepareCustomer.executeQuery();
+			if (rs_vendorid.next()) {
+				vendorid = rs_vendorid.getInt(1);
+				amount = rs_vendorid.getFloat(2);
+			}
+			prepareCustomer = conncustomer
+					.prepareStatement(sqlinsert_cv_master);
+			prepareCustomer.setInt(1, customer.getCustid());
+			prepareCustomer.setInt(2, vendorid);
+			prepareCustomer.setFloat(3, amount);
+
+			status = prepareCustomer.executeUpdate();
+		} finally {
+			DBUtil.closeConnection();
+			if (conncustomer != null) {
+
+				conncustomer.close();
+
+			}
+		}
+		return status;
+
+	}
+
+	// module for customer fetch for update
+	public Customer fetchCustomerDetails(final int userid)
+			throws ClassNotFoundException, SQLException {
+		final Customer customer = new Customer();
+		PreparedStatement psfetch = null;
+		ResultSet rscustomer = null;
+		Connection con = null;
+
+		try {
+			con = DBUtil.createConnection();
+			String sql = "SELECT * FROM Customer WHERE ID=?";
+
+			psfetch = con.prepareStatement(sql);
+			psfetch.setInt(1, userid);
+			rscustomer = psfetch.executeQuery();
+			while (rscustomer.next()) {
+
+				if (rscustomer.getInt("ID") == userid) {
+					final String country_id = rscustomer
+							.getString("country_id");
+					final PreparedStatement pscountry = con
+							.prepareStatement("SELECT * FROM COUNTRY WHERE ID='"
+									+ country_id + "'");
+					final ResultSet rscountry = pscountry.executeQuery();
+					String country = null;
+					String state = null;
+
+					while (rscountry.next()) {
+						if (rscountry.getString("ID").equals(country_id)) {
+							country = rscountry.getString("COUNTRY");
+							state = rscountry.getString("STATE");
+						}
+					}
+					customer.setCustid(rscustomer.getInt("id"));
+					customer.setName(rscustomer.getString("name"));
+					customer.setContactNo(rscustomer.getString("contact_no"));
+					customer.setAddress(rscustomer.getString("address"));
+					customer.setCountryName(country);
+					customer.setStateName(state);
+					customer.setEmail(rscustomer.getString("email"));
+					customer.setCardNo(rscustomer.getString("card_no"));
+				}
+
+			}
+
+		} finally {
+
+			DBUtil.closeConnection();
+			if (con != null) {
+				con.close();
+
+			}
+
+		}
+		return customer;
+	}
+
+	// module for customer update
+	public int updateRecord(final Customer customer)
+			throws ClassNotFoundException, SQLException {
+		int status = 0;
+
+		String countryid = null;
+
+		String cname, sname;
+		cname = customer.getCountryName();
+		sname = customer.getStateName();
+		String sql_cust_countryid = "Select ID from COUNTRY where COUNTRY=? and STATE=?";
+
+		String sql_cust_update = "UPDATE CUSTOMER SET NAME=?,CONTACT_NO=?,ADDRESS=?,EMAIL=?,COUNTRY_ID=?,CARD_NO=? WHERE ID=?";
+
+		try {
+			conncustomer = DBUtil.createConnection();
+			prepareCustomer = conncustomer.prepareStatement(sql_cust_countryid);
+			prepareCustomer.setString(1, cname);
+			prepareCustomer.setString(2, sname);
+			ResultSet rscountry_id = prepareCustomer.executeQuery();
+			if (rscountry_id.next()) {
+				countryid = rscountry_id.getString(1);
+			}
+			customer.setCountryId(countryid);
+
+			prepareCustomer = conncustomer.prepareStatement(sql_cust_update);
+
+			prepareCustomer.setString(1, customer.getName());
+			prepareCustomer.setString(2, customer.getContactNo());
+			prepareCustomer.setString(3, customer.getAddress());
+			prepareCustomer.setString(4, customer.getEmail());
+			prepareCustomer.setString(5, customer.getCountryId());
+			prepareCustomer.setString(6, customer.getCardNo());
+			prepareCustomer.setInt(7, customer.getCustid());
+
+			status = prepareCustomer.executeUpdate();
+
+		} finally {
+
+			if (conncustomer != null) {
+				try {
+					DBUtil.closeConnection();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+		return status;
+
+	}
+
+	//module to check whether a vendor exists corresponding to a customer
+	public boolean validateVendor(Customer customer) throws ClassNotFoundException, SQLException{
+		// TODO Auto-generated method stub
+		boolean status = false;
+		String vendorName = null;
+		String vendorType = null;
+		int vendorid = 0;
+		String sql_cust_vendorid = "Select ID from VENDOR where NAME=? and TYPE=?";
+		String sql_check_vendor="SELECT * from CV_MASTER WHERE VENDOR_ID= ? and CUSTOMER_ID=? ";
+		try {
+			conncustomer = DBUtil.createConnection();
+			vendorName = customer.getVendorName();
+			vendorType = customer.getVendorType();
+			prepareCustomer = conncustomer.prepareStatement(sql_cust_vendorid);
+			prepareCustomer.setString(1, vendorName);
+			prepareCustomer.setString(2, vendorType);
+			ResultSet rs_vendorid = prepareCustomer.executeQuery();
+			if (rs_vendorid.next()) {
+				vendorid = rs_vendorid.getInt(1);
+			}
+			int customerid=customer.getCustid();
+			prepareCustomer = conncustomer.prepareStatement(sql_check_vendor);
+			prepareCustomer.setInt(1, vendorid);
+			prepareCustomer.setInt(2, customerid);
+			ResultSet rs_checkvendor = prepareCustomer.executeQuery();
+			if ( !rs_checkvendor.next()) {
+			status=true;
+			}
+			else
+				status=false;
+			
+		}
+finally
+{
+				if (conncustomer != null) {
+					try {
+						DBUtil.closeConnection();
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}
+		
+		return status;
+	}
+	
+	
+	
+	
+}
