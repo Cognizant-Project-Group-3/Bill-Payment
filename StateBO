@@ -1,0 +1,36 @@
+package com.billpayment.BO;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+
+import com.billpayment.dao.StateDAO;
+
+public class StateBO {
+	private static final Logger LOGGER = Logger
+	.getLogger(com.billpayment.BO.AdminBO.class);
+	
+	//to fetch the states corresponding to a country
+	public Map<String, String> fetchStates(final String country) {
+		ArrayList<String> states = new ArrayList<String>();
+		Map<String, String> India = new LinkedHashMap<String, String>();
+		StateDAO vdao = new StateDAO();
+		
+			states = vdao.fetchIndiaStates(country);
+			Iterator<String> itr_states = states.iterator();
+
+			while (itr_states.hasNext()) {
+
+				String s2 = itr_states.next();
+
+				India.put(s2, s2);
+
+
+	}
+			return India;
+
+	}
+}
